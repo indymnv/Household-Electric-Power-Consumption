@@ -4,7 +4,7 @@ using StatsKit
 using CSV
 using DelimitedFiles
 
-df = DataFrame(CSV.File("./data/household_power_consumption.txt"), normalizenames=true)
+#df = DataFrame(CSV.File("./data/household_power_consumption.txt"), normalizenames=true)
 
 # Read the text file into a matrix
 data = readdlm("./data/household_power_consumption.txt", ';',)
@@ -38,5 +38,6 @@ df[!, :Time] =  parse.(Time, df."Time")
 # parsing Date
 df[!,1] = replace.(df[!,1], "/" => "-")
 df[!,1] = Date.(df[!,1], "d-m-y")
+
 
 
