@@ -23,6 +23,36 @@ df[!,:day] = Day.(df[!,1])
 df[!, :hour] = Hour.(df[!,2])
 df[!, :minute] = Minute.(df[!,2])
 
-plot(df[2:1000, 10], df[2:1000,3], )
-#plot!(df[2:550,4])
+p = plot(layout=(2,3))
+for j in 3:9
+    for i in unique(df[!,:year])
+        df_year = filter(row ->row.year == i,df)
+        display(plot!(p[j-2], 
+            df_year[1:1000,j] ,
+            label = "$i",
+            title = names(df)[j],
+            size = (1000, 800)
+        ))
+    end
+end    #plot!(df[2:550,4])
 
+p = plot(layout=(2,3))
+for j in 3:9
+    for i in unique(df[!,:year])
+        df_year = filter(row ->row.year == i,df)
+        display(plot!(p[j-2], 
+            df_year[1:1000,j] ,
+            label = "$i",
+            title = names(df)[j],
+            size = (1000, 800)
+        ))
+    end
+end    #plot!(df[2:550,4])
+
+
+plot( )
+
+byyear =  groupby(df, :year)
+
+
+plot(df[!,4] )
