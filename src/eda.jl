@@ -3,6 +3,7 @@ using StatsKit
 using CSV
 using DelimitedFiles
 using Plots
+using Statistics
 
 include("src/read.jl")
 
@@ -36,23 +37,19 @@ for j in 3:9
     end
 end    #plot!(df[2:550,4])
 
-p = plot(layout=(2,3))
+num_cols = names(df, findall(x -> eltype(x) <: Number, eachcol(df)))
+p = plot(layout=(2,3), size = (1000, 800))
 for j in 3:9
-    for i in unique(df[!,:year])
+    for i in unique(df[!,:year])[2:end]
         df_year = filter(row ->row.year == i,df)
+        mean_df = sort(combine(groupby(df_year, ["month"]), 
+                num_cols .=> mean .=> num_cols), :month)
         display(plot!(p[j-2], 
-            df_year[1:1000,j] ,
+            mean_df[!,j] ,
             label = "$i",
-            title = names(df)[j],
-            size = (1000, 800)
+            title = names(df_year)[j],
         ))
     end
 end    #plot!(df[2:550,4])
 
 
-plot( )
-
-byyear =  groupby(df, :year)
-
-
-plot(df[!,4] )

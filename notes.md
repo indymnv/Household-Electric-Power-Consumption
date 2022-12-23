@@ -16,6 +16,8 @@
 	c. Global activity and sub metering 3
 but is a) who shows the more linear behaviour trend expected.
 
-
+## Reviewing ts series
+1. Year 2006 is more noisy for first variable
+2. searching for average the voltage show clear trends for months and in july show a clear down trend, probably is the hot season (summer)
 
 
