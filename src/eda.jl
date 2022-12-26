@@ -1,14 +1,16 @@
+using Plots: Legend
 using DataFrames
 using StatsKit
 using CSV
 using DelimitedFiles
 using Plots
+using StatsPlots
 using Statistics
 
 include("src/read.jl")
 
 #read data
-df = read_data()
+df = real_data()
 
 #Create a variable 
 date_time = [DateTime(d, t) for (d,t) in zip(df[!,1], df[!,2])]
@@ -24,7 +26,14 @@ df[!,:day] = Day.(df[!,1])
 df[!, :hour] = Hour.(df[!,2])
 df[!, :minute] = Minute.(df[!,2])
 
-p = plot(layout=(2,3))
+#Create variable for weekends
+df[!, :dayofweek] = [dayofweek(date) for date in df.Date]
+df[!, :weekend] = [day in [6, 7] for day in df.dayofweek]
+
+plot(df[!,3], size = (1500,1000))
+
+#Plot for simple sample of time series
+p = plot(layout=(2,3), size = (1000,800))
 for j in 3:9
     for i in unique(df[!,:year])
         df_year = filter(row ->row.year == i,df)
@@ -32,11 +41,11 @@ for j in 3:9
             df_year[1:1000,j] ,
             label = "$i",
             title = names(df)[j],
-            size = (1000, 800)
         ))
     end
 end    #plot!(df[2:550,4])
 
+#plot for average by months
 num_cols = names(df, findall(x -> eltype(x) <: Number, eachcol(df)))
 p = plot(layout=(2,3), size = (1000, 800))
 for j in 3:9
@@ -51,5 +60,25 @@ for j in 3:9
         ))
     end
 end    #plot!(df[2:550,4])
+
+
+# Plot difference between weekends
+
+fig = plot(layout = (1,7), size = (1500, 600))
+for col in 3:9
+    name_col = names(df)[col]
+    df2 = unstack(sort(df[!, ["date_time","month", name_col]], :month), "month", name_col)
+    df2 = df2[!,2:end]
+    for i in 1:12
+        display(@df df2 StatsPlots.boxplot!(fig[col-2], collect(skipmissing(df2[!,i])), label= false, title = name_col,))
+    end
+end
+
+
+# Plot for season average
+# Plot by hour average consumption boxplot can be nice
+# monthly average energy consumptions (by days)
+# Create a average rolling and plot the trends again (every days or wathever)
+# Use Dickey-Fuller test (I don't now why)
 
 
