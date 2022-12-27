@@ -87,6 +87,17 @@ end
 
 # Plot for season average
 # Plot by hour average consumption boxplot can be nice
+fig = plot(layout = (1,7), size = (1500, 600))
+for col in 3:9
+    name_col = names(df)[col]
+    df2 = unstack(sort(df[!, ["date_time","hour", name_col]], :hour), "hour", name_col)
+    df2 = df2[!,2:end]
+    for i in 1:24
+        display(@df df2 StatsPlots.boxplot!(fig[col-2], collect(skipmissing(df2[!,i])), label= false, title = name_col,))
+    end
+end
+
+
 # monthly average energy consumptions (by days)
 # Create a average rolling and plot the trends again (every days or wathever)
 # Use Dickey-Fuller test (I don't now why)
