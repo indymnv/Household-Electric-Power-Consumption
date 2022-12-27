@@ -43,7 +43,7 @@ for j in 3:9
             title = names(df)[j],
         ))
     end
-end    #plot!(df[2:550,4])
+end    
 
 #plot for average by months
 num_cols = names(df, findall(x -> eltype(x) <: Number, eachcol(df)))
@@ -59,11 +59,9 @@ for j in 3:9
             title = names(df_year)[j],
         ))
     end
-end    #plot!(df[2:550,4])
+end   
 
-
-# Plot difference between weekends
-
+# Plot difference between every month
 fig = plot(layout = (1,7), size = (1500, 600))
 for col in 3:9
     name_col = names(df)[col]
@@ -74,6 +72,18 @@ for col in 3:9
     end
 end
 
+# Compare weekday and weekends
+fig = plot(layout = (1,7), size = (1500, 600))
+for col in 3:9
+    name_col = names(df)[col]
+    df2 = sort(df[!, ["date_time", "weekend", name_col]],)
+    df2 = df2[!,2:end]
+    display(@df filter(x -> x.weekend == true, df2) StatsPlots.boxplot!(fig[col-2], 
+            filter(x -> x.weekend == true, df2)[!, name_col], label= false, title = name_col,))
+    display(@df filter(x -> x.weekend == false, df2) StatsPlots.boxplot!(fig[col-2],
+            filter(x -> x.weekend == false, df2)[!, name_col], label= false, title = name_col,))
+end
+
 
 # Plot for season average
 # Plot by hour average consumption boxplot can be nice
@@ -81,4 +91,5 @@ end
 # Create a average rolling and plot the trends again (every days or wathever)
 # Use Dickey-Fuller test (I don't now why)
 
+# Create a 9x9 matrix of random float values
 
