@@ -99,8 +99,19 @@ end
 
 
 # monthly average energy consumptions (by days)
+fig = plot(layout = (1,7), size = (1500, 600))
+for col in 3:9
+    name_col = names(df)[col]
+    df2 = unstack(sort(df[!, ["date_time","dayofweek", name_col]], :dayofweek), "dayofweek", name_col)
+    df2 = df2[!,2:end]
+    for i in 1:7
+        display(@df df2 StatsPlots.boxplot!(fig[col-2], collect(skipmissing(df2[!,i])), label= false, title = name_col,))
+    end
+end
+
+
 # Create a average rolling and plot the trends again (every days or wathever)
 # Use Dickey-Fuller test (I don't now why)
 
-# Create a 9x9 matrix of random float values
-
+plot([StatsPlots.histogram(df[!,col]; label = col) for col in ["Sub_metering_1", 
+                    "Sub_metering_2", "Sub_metering_3", "Voltage"]]...)
