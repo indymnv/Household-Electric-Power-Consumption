@@ -1,4 +1,4 @@
-using Plots: Legend
+using Plots
 using DataFrames
 using StatsKit
 using CSV
@@ -10,7 +10,7 @@ using Statistics
 include("src/read.jl")
 
 #read data
-df = real_data()
+df = read_data()
 
 #Create a variable 
 date_time = [DateTime(d, t) for (d,t) in zip(df[!,1], df[!,2])]
@@ -110,8 +110,10 @@ for col in 3:9
 end
 
 
+function moving_average(X::Vector, fold::Int)
+    
+end
 # Create a average rolling and plot the trends again (every days or wathever)
 # Use Dickey-Fuller test (I don't now why)
 
-plot([StatsPlots.histogram(df[!,col]; label = col) for col in ["Sub_metering_1", 
-                    "Sub_metering_2", "Sub_metering_3", "Voltage"]]...)
+plot([StatsPlots.plot(df[1:10000,col]; label = col) for col in ["Sub_metering_1",                   "Sub_metering_2", "Sub_metering_3", "Voltage"]]...)
