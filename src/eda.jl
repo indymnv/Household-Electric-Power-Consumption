@@ -6,6 +6,7 @@ using DelimitedFiles
 using Plots
 using StatsPlots
 using Statistics
+using RollingFunctions
 
 include("src/read.jl")
 
@@ -30,7 +31,8 @@ df[!, :minute] = Minute.(df[!,2])
 df[!, :dayofweek] = [dayofweek(date) for date in df.Date]
 df[!, :weekend] = [day in [6, 7] for day in df.dayofweek]
 
-plot(df[!,3], size = (1500,1000))
+#Replace -1 for missing 
+
 
 #Plot for simple sample of time series
 p = plot(layout=(2,3), size = (1000,800))
@@ -109,11 +111,9 @@ for col in 3:9
     end
 end
 
-
-function moving_average(X::Vector, fold::Int)
-    
-end
 # Create a average rolling and plot the trends again (every days or wathever)
 # Use Dickey-Fuller test (I don't now why)
 
-plot([StatsPlots.plot(df[1:10000,col]; label = col) for col in ["Sub_metering_1",                   "Sub_metering_2", "Sub_metering_3", "Voltage"]]...)
+plot([StatsPlots.plot(df[1:50000,col]; label = col) for col in ["Global_active_power",  "Global_reactive_power", "Global_intensity", "Voltage"]]...)
+
+ADFTest(df.Voltage, :none, 20)
