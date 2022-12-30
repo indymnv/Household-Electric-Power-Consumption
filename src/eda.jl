@@ -31,8 +31,13 @@ df[!, :minute] = Minute.(df[!,2])
 df[!, :dayofweek] = [dayofweek(date) for date in df.Date]
 df[!, :weekend] = [day in [6, 7] for day in df.dayofweek]
 
-#Replace -1 for missing 
-
+#Reviewing -1 for missing 
+miss_data = filter(x -> x.row <= 0.0, df)
+sort(combine(groupby(miss_data, :year), nrow), :nrow)
+sort(combine(groupby(miss_data, :month), nrow), :nrow)
+sort(combine(groupby(miss_data, :weekend), nrow), :nrow)
+sort(combine(groupby(miss_data, :dayofweek), nrow), :nrow)
+sort(combine(groupby(miss_data, :hour), nrow), :nrow)
 
 #Plot for simple sample of time series
 p = plot(layout=(2,3), size = (1000,800))
@@ -85,7 +90,6 @@ for col in 3:9
     display(@df filter(x -> x.weekend == false, df2) StatsPlots.boxplot!(fig[col-2],
             filter(x -> x.weekend == false, df2)[!, name_col], label= false, title = name_col,))
 end
-
 
 # Plot for season average
 # Plot by hour average consumption boxplot can be nice

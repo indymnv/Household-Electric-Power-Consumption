@@ -20,4 +20,12 @@ but is a) who shows the more linear behaviour trend expected.
 1. Year 2006 is more noisy for first variable
 2. searching for average the voltage show clear trends for months and in july show a clear down trend, probably is the hot season (summer)
 
+# Missing values
+1. The missing data is represented by -1 in data frame by all row
+2. Every year is increasing the amount of data missing
+3. there is no big difference in hour
+4. high presence of missing values on weekend if compare with the rest of week.
+
+*This can lead to a reason where there is more presence of people in the house but is just a theory for now*
+
 
