@@ -7,6 +7,7 @@ using Plots
 using StatsPlots
 using Statistics
 using RollingFunctions
+using SignalDecomposition
 
 include("src/read.jl")
 
