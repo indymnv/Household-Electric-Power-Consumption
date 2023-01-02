@@ -16,7 +16,7 @@ df = read_data()
 
 X = df[!,3:end]
 
-train = reshape(Matrix(X), (size(X)[2], size(X)[1]))
+train = collect(Matrix(df[:, 3:end])')
 
 # cluster X into 20 clusters using K-means
 R = kmeans(train , 5; maxiter=200, display=:iter)
