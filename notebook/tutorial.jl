@@ -44,6 +44,42 @@ end
 # ╔═╡ b20e5a78-3c5c-4ae8-b49c-38d3eaf1bba1
 data
 
+# ╔═╡ 2364d69b-f093-4fa0-a366-96c4091660bf
+begin
+	#Create a variable 
+	date_time = [DateTime(d, t) for (d,t) in zip(data[!,1], data[!,2])]
+	
+	data[!,:date_time] = date_time
+	
+	#Create variable for date
+	data[!,:year] = Year.(data[!,1])
+	data[!,:month] = Month.(data[!,1])
+	data[!,:day] = Day.(data[!,1])
+	
+	#Create variable for time
+	data[!, :hour] = Hour.(data[!,2])
+	data[!, :minute] = Minute.(data[!,2])
+	
+	#Create variable for weekends
+	data[!, :dayofweek] = [dayofweek(date) for date in data.Date]
+	data[!, :weekend] = [day in [6, 7] for day in data.dayofweek]
+end
+
+# ╔═╡ 82f8cfc4-41e2-479a-8f2e-d60c8e4bf23d
+data
+
+# ╔═╡ 9ca9f15b-d276-4844-ab80-d7a997ca69cc
+plot(data.Voltage)
+
+# ╔═╡ 0100421c-dea1-4ec4-a622-b96ac3a9775e
+plot([plot(data[1:50000,col]; label = col) for col in ["Global_active_power",  "Global_reactive_power", "Global_intensity", "Voltage"]]...)
+
+# ╔═╡ dbf401a8-5fe5-4206-ade9-1400f6599bd4
+plot([plot(data[1:50000,col]; label = col) for col in ["Sub_metering_1",  "Sub_metering_2", "Sub_metering_3"]]...)
+
+# ╔═╡ 185e8de6-b136-45d3-9603-7cb62fe46a95
+
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1381,5 +1417,11 @@ version = "1.4.1+0"
 # ╠═62e02377-da4c-4381-9e59-4f32372f4fb5
 # ╠═a4526d2f-5895-4468-aa43-1192b2dd50b5
 # ╠═b20e5a78-3c5c-4ae8-b49c-38d3eaf1bba1
+# ╠═2364d69b-f093-4fa0-a366-96c4091660bf
+# ╠═82f8cfc4-41e2-479a-8f2e-d60c8e4bf23d
+# ╠═9ca9f15b-d276-4844-ab80-d7a997ca69cc
+# ╠═0100421c-dea1-4ec4-a622-b96ac3a9775e
+# ╠═dbf401a8-5fe5-4206-ade9-1400f6599bd4
+# ╠═185e8de6-b136-45d3-9603-7cb62fe46a95
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
