@@ -13,32 +13,7 @@ begin
 	using ZipFile
 	using HTTP
 	using CSV
-end
-
-# ╔═╡ 374e52f7-e6af-4adb-8137-0d6fe284f065
-function parse_dataframe(dataframe)
-
-    function ensure_floats(arr::Array{Any})
-        output_arr = copy(arr)
-        for (i, x) in enumerate(arr)
-            if !isa(x, Float64)
-                output_arr[i] = -1
-            end
-        end
-        return output_arr
-    end
-
-    #dataframe[:,3:8] = mapcols( ensure_floats, dataframe[!,3:8])
-
-    for i in 3:8
-        dataframe[!,i] = convert(Vector{Float64}, dataframe[!, i])
-    end
-    # Parsing Time
-    #df[!, :Time] =  parse.(Time, df."Time")
-    # parsing Date
-    dataframe[!,1] = replace.(dataframe[!,1], "/" => "-")
-    dataframe[!,1] = Date.(dataframe[!,1], "d-m-y")
-    return dataframe
+	using Dates
 end
 
 # ╔═╡ 1c41d476-dda7-45b8-bc25-ec757244f932
@@ -48,14 +23,36 @@ begin
 	z = ZipFile.Reader(f)
 	z_by_filename = Dict( f.name => f for f in z.files)
 	data = CSV.read(z_by_filename["household_power_consumption.txt"], DataFrame,)
-	df = parse_dataframe(data)
+	#df = parse_dataframe(data)
 end
+
+# ╔═╡ 652f39e8-227c-4f6c-a9f0-7b576e8f89e8
+describe(data)
+
+# ╔═╡ 62e02377-da4c-4381-9e59-4f32372f4fb5
+dropmissing!(data)
+
+# ╔═╡ 07e37822-c532-4bbf-aea5-779f1bf57233
+describe(data)
+
+# ╔═╡ a4526d2f-5895-4468-aa43-1192b2dd50b5
+begin
+	for i in 3:8
+		data[!,i] = parse.(Float64, data[!,i])
+	end
+	data[!,1] = replace.(data[!,1], "/" => "-")
+    data[!,1] = Date.(data[!,1], "d-m-y")
+end
+
+# ╔═╡ b20e5a78-3c5c-4ae8-b49c-38d3eaf1bba1
+data
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
 MLJ = "add582a8-e3ab-11e8-2d5e-e98b27df1bc7"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
@@ -78,7 +75,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.3"
 manifest_format = "2.0"
-project_hash = "12a5c116baa87f412377e63b2ea5c431bf1f3a0c"
+project_hash = "2848cae07903557e478706893d1b76487183ebb9"
 
 [[deps.ARFFFiles]]
 deps = ["CategoricalArrays", "Dates", "Parsers", "Tables"]
@@ -1382,7 +1379,11 @@ version = "1.4.1+0"
 
 # ╔═╡ Cell order:
 # ╠═a4ba2c57-8cf2-4bb7-800a-4839af64849c
-# ╠═374e52f7-e6af-4adb-8137-0d6fe284f065
 # ╠═1c41d476-dda7-45b8-bc25-ec757244f932
+# ╠═652f39e8-227c-4f6c-a9f0-7b576e8f89e8
+# ╠═62e02377-da4c-4381-9e59-4f32372f4fb5
+# ╠═07e37822-c532-4bbf-aea5-779f1bf57233
+# ╠═a4526d2f-5895-4468-aa43-1192b2dd50b5
+# ╠═b20e5a78-3c5c-4ae8-b49c-38d3eaf1bba1
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
