@@ -14,6 +14,7 @@ begin
 	using HTTP
 	using CSV
 	using Dates
+	using Statistics
 end
 
 # ╔═╡ 1c41d476-dda7-45b8-bc25-ec757244f932
@@ -69,16 +70,34 @@ end
 data
 
 # ╔═╡ 9ca9f15b-d276-4844-ab80-d7a997ca69cc
-plot(data.Voltage)
+plot(data.date_time,data.Voltage)
 
 # ╔═╡ 0100421c-dea1-4ec4-a622-b96ac3a9775e
 plot([plot(data[1:50000,col]; label = col) for col in ["Global_active_power",  "Global_reactive_power", "Global_intensity", "Voltage"]]...)
 
 # ╔═╡ dbf401a8-5fe5-4206-ade9-1400f6599bd4
-plot([plot(data[1:50000,col]; label = col) for col in ["Sub_metering_1",  "Sub_metering_2", "Sub_metering_3"]]...)
+plot([plot(data[1:50000, :date_time],data[1:50000,col]; label = col, xrot=45) for col in ["Sub_metering_1",  "Sub_metering_2", "Sub_metering_3"]]...)
 
 # ╔═╡ 185e8de6-b136-45d3-9603-7cb62fe46a95
+plot([plot(data[1:50000, :date_time],data[1:50000,col]; label = col, xrot=30) for col in ["Global_active_power",  "Global_reactive_power", "Global_intensity", "Voltage", "Sub_metering_1",  "Sub_metering_2", "Sub_metering_3"]]...)
 
+# ╔═╡ d90786bf-aab1-49bf-8b7b-82827c61da1b
+begin
+	cm = cor(Matrix(data[!,3:9]))
+    cols = Symbol.(names(data[!,3:9]))
+
+    (n,m) = size(cm)
+    heatmap(cm, 
+        fc = cgrad([:white,:dodgerblue4]),
+        xticks = (1:m,cols),
+        xrot= 90,
+        size= (800, 800),
+        yticks = (1:m,cols),
+        yflip=true)
+    annotate!([(j, i, text(round(cm[i,j],digits=3),
+                       8,"Computer Modern",:black))
+           for i in 1:n for j in 1:m])
+end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -89,6 +108,7 @@ Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
 MLJ = "add582a8-e3ab-11e8-2d5e-e98b27df1bc7"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 UrlDownload = "856ac37a-3032-4c1c-9122-f86d88358c8b"
 ZipFile = "a5390f91-8eb1-5f08-bee0-b1d1ffed6cea"
 
@@ -108,7 +128,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.3"
 manifest_format = "2.0"
-project_hash = "2848cae07903557e478706893d1b76487183ebb9"
+project_hash = "c9344e10af8e76b4f2ad581f051ae77ba74b2409"
 
 [[deps.ARFFFiles]]
 deps = ["CategoricalArrays", "Dates", "Parsers", "Tables"]
@@ -1423,5 +1443,6 @@ version = "1.4.1+0"
 # ╠═0100421c-dea1-4ec4-a622-b96ac3a9775e
 # ╠═dbf401a8-5fe5-4206-ade9-1400f6599bd4
 # ╠═185e8de6-b136-45d3-9603-7cb62fe46a95
+# ╠═d90786bf-aab1-49bf-8b7b-82827c61da1b
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
