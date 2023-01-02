@@ -32,9 +32,6 @@ describe(data)
 # ╔═╡ 62e02377-da4c-4381-9e59-4f32372f4fb5
 dropmissing!(data)
 
-# ╔═╡ 07e37822-c532-4bbf-aea5-779f1bf57233
-describe(data)
-
 # ╔═╡ a4526d2f-5895-4468-aa43-1192b2dd50b5
 begin
 	for i in 3:8
@@ -1382,7 +1379,6 @@ version = "1.4.1+0"
 # ╠═1c41d476-dda7-45b8-bc25-ec757244f932
 # ╠═652f39e8-227c-4f6c-a9f0-7b576e8f89e8
 # ╠═62e02377-da4c-4381-9e59-4f32372f4fb5
-# ╠═07e37822-c532-4bbf-aea5-779f1bf57233
 # ╠═a4526d2f-5895-4468-aa43-1192b2dd50b5
 # ╠═b20e5a78-3c5c-4ae8-b49c-38d3eaf1bba1
 # ╟─00000000-0000-0000-0000-000000000001
