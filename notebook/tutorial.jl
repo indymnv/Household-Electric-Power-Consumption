@@ -122,7 +122,7 @@ end
 # ╔═╡ f5cff6d6-3652-496c-afdf-b6bb4a70d203
 begin
 	KMeans= @load KMeans pkg=Clustering
-	kmeans = KMeans(k=5)
+	kmeans = KMeans(k=3)
 	#train = collect(Matrix(X)')
 	mach = machine(kmeans, X) |> fit!
 	
@@ -148,9 +148,6 @@ yhat = predict(mach)
 
 # ╔═╡ f4c70dce-84c1-472c-8e90-cec676621a2a
 data[!,:cluster] = yhat
-
-# ╔═╡ d69a9c51-4796-41bd-9ab4-f12354ffd3c2
-
 
 # ╔═╡ e3239243-ccd3-403a-be05-24ee8c43b766
 scatter(data[1:20000,:].date_time,data[1:20000,:].Voltage,  group=data[1:20000,:].cluster,)
@@ -1542,7 +1539,6 @@ version = "1.4.1+0"
 # ╠═5cfda8cd-a5a0-43b2-a0e4-0b2a6b52ab7c
 # ╠═4656e086-ea2d-4edf-b691-9716f6d41d0d
 # ╠═f4c70dce-84c1-472c-8e90-cec676621a2a
-# ╠═d69a9c51-4796-41bd-9ab4-f12354ffd3c2
 # ╠═e3239243-ccd3-403a-be05-24ee8c43b766
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
