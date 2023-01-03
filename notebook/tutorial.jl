@@ -15,6 +15,9 @@ begin
 	using CSV
 	using Dates
 	using Statistics
+	using MLJClusteringInterface
+	using ParallelKMeans
+	using Clustering
 end
 
 # ╔═╡ 1c41d476-dda7-45b8-bc25-ec757244f932
@@ -111,17 +114,42 @@ begin
 	X = MLJ.transform(transformer_model, X);
 end
 
-# ╔═╡ f5cff6d6-3652-496c-afdf-b6bb4a70d203
+# ╔═╡ e7f713c8-d56b-4b00-9a65-ba1b6411999f
+for m in models()
+    println("Model name = ",m.name,", ","Prediction type = ",m.prediction_type,", ","Package name = ",m.package_name);
+end
 
+# ╔═╡ f5cff6d6-3652-496c-afdf-b6bb4a70d203
+begin
+	KMeans= @load KMeans pkg=Clustering
+	kmeans = KMeans(k=5)
+	train = collect(Matrix(X)')
+	mach = machine(kmeans, train) |> fit!
+	
+	# cluster X into 5 clusters using K-means
+	#R = machine(train , 5; maxiter=200, display=:iter)
+	
+	#@assert nclusters(R) == 5 # verify the number of clusters
+	
+	#a = assignments(R) # get the assignments of points to clusters
+	#c = counts(R) # get the cluster sizes
+	#M = R.centers # get the cluster centers
+end
+
+# ╔═╡ 4656e086-ea2d-4edf-b691-9716f6d41d0d
+mach
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+Clustering = "aaaa29a8-35af-508c-8bc3-b662a17a0fe5"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
 MLJ = "add582a8-e3ab-11e8-2d5e-e98b27df1bc7"
+MLJClusteringInterface = "d354fa79-ed1c-40d4-88ef-b8c7bd1568af"
+ParallelKMeans = "42b8e9d4-006b-409a-8472-7f34b3fb58af"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 UrlDownload = "856ac37a-3032-4c1c-9122-f86d88358c8b"
@@ -129,9 +157,12 @@ ZipFile = "a5390f91-8eb1-5f08-bee0-b1d1ffed6cea"
 
 [compat]
 CSV = "~0.10.8"
+Clustering = "~0.14.3"
 DataFrames = "~1.4.4"
 HTTP = "~1.6.2"
 MLJ = "~0.19.0"
+MLJClusteringInterface = "~0.1.9"
+ParallelKMeans = "~1.0.1"
 Plots = "~1.38.0"
 UrlDownload = "~1.0.1"
 ZipFile = "~0.10.1"
@@ -143,7 +174,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.3"
 manifest_format = "2.0"
-project_hash = "c9344e10af8e76b4f2ad581f051ae77ba74b2409"
+project_hash = "0405b447da9a164b4981558cd17e1805760fba2d"
 
 [[deps.ARFFFiles]]
 deps = ["CategoricalArrays", "Dates", "Parsers", "Tables"]
@@ -218,6 +249,12 @@ deps = ["ChainRulesCore", "LinearAlgebra", "Test"]
 git-tree-sha1 = "38f7a08f19d8810338d4f5085211c7dfa5d5bdd8"
 uuid = "9e997f8a-9a97-42d5-a9f1-ce6bfc15e2c0"
 version = "0.1.4"
+
+[[deps.Clustering]]
+deps = ["Distances", "LinearAlgebra", "NearestNeighbors", "Printf", "Random", "SparseArrays", "Statistics", "StatsBase"]
+git-tree-sha1 = "64df3da1d2a26f4de23871cd1b6482bb68092bd5"
+uuid = "aaaa29a8-35af-508c-8bc3-b662a17a0fe5"
+version = "0.14.3"
 
 [[deps.CodecZlib]]
 deps = ["TranscodingStreams", "Zlib_jll"]
@@ -707,6 +744,12 @@ git-tree-sha1 = "645ad8980fbd61321dc16dc072f97099d9cf60c9"
 uuid = "a7f614a8-145f-11e9-1d2a-a57a1082229d"
 version = "0.21.3"
 
+[[deps.MLJClusteringInterface]]
+deps = ["Clustering", "Distances", "MLJModelInterface"]
+git-tree-sha1 = "3256d67c33a6a1c4f96e15fbce46e451660ebaf6"
+uuid = "d354fa79-ed1c-40d4-88ef-b8c7bd1568af"
+version = "0.1.9"
+
 [[deps.MLJEnsembles]]
 deps = ["CategoricalArrays", "CategoricalDistributions", "ComputationalResources", "Distributed", "Distributions", "MLJBase", "MLJModelInterface", "ProgressMeter", "Random", "ScientificTypesBase", "StatsBase"]
 git-tree-sha1 = "bb8a1056b1d8b40f2f27167fc3ef6412a6719fbf"
@@ -788,6 +831,12 @@ git-tree-sha1 = "a7c3d1da1189a1c2fe843a3bfa04d18d20eb3211"
 uuid = "77ba4419-2d1f-58cd-9bb1-8ffee604a2e3"
 version = "1.0.1"
 
+[[deps.NearestNeighbors]]
+deps = ["Distances", "StaticArrays"]
+git-tree-sha1 = "2c3726ceb3388917602169bed973dbc97f1b51a8"
+uuid = "b8a86587-4115-5ab1-83bc-aa920d37bbce"
+version = "0.4.13"
+
 [[deps.NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 version = "1.2.0"
@@ -853,6 +902,12 @@ deps = ["LinearAlgebra", "SparseArrays", "SuiteSparse"]
 git-tree-sha1 = "cf494dca75a69712a72b80bc48f59dcf3dea63ec"
 uuid = "90014a1f-27ba-587c-ab20-58faa44d9150"
 version = "0.11.16"
+
+[[deps.ParallelKMeans]]
+deps = ["Distances", "MLJModelInterface", "Random", "StatsBase", "UnsafeArrays"]
+git-tree-sha1 = "92f66e0c0970531ec0eac41ef47b538d94aa4e26"
+uuid = "42b8e9d4-006b-409a-8472-7f34b3fb58af"
+version = "1.0.1"
 
 [[deps.Parameters]]
 deps = ["OrderedCollections", "UnPack"]
@@ -1186,6 +1241,11 @@ git-tree-sha1 = "d670a70dd3cdbe1c1186f2f17c9a68a7ec24838c"
 uuid = "1986cc42-f94f-5a68-af5c-568840ba703d"
 version = "1.12.2"
 
+[[deps.UnsafeArrays]]
+git-tree-sha1 = "3350f94f6caa02f324a23645bf524fc9334c7488"
+uuid = "c4a57d5a-5b31-53a6-b365-19f8c011fbd6"
+version = "1.0.4"
+
 [[deps.Unzip]]
 git-tree-sha1 = "ca0969166a028236229f63514992fc073799bb78"
 uuid = "41fe7b60-77ed-43a1-b4f0-825fd5a5650d"
@@ -1461,6 +1521,8 @@ version = "1.4.1+0"
 # ╠═d90786bf-aab1-49bf-8b7b-82827c61da1b
 # ╠═fc5f2226-eceb-47e5-9c50-a644fdf5a5d1
 # ╠═fc4bd69b-0fb4-46b4-b1a5-fb95bb4990d5
+# ╠═e7f713c8-d56b-4b00-9a65-ba1b6411999f
 # ╠═f5cff6d6-3652-496c-afdf-b6bb4a70d203
+# ╠═4656e086-ea2d-4edf-b691-9716f6d41d0d
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
