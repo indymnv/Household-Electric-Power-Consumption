@@ -123,8 +123,8 @@ end
 begin
 	KMeans= @load KMeans pkg=Clustering
 	kmeans = KMeans(k=5)
-	train = collect(Matrix(X)')
-	mach = machine(kmeans, train) |> fit!
+	#train = collect(Matrix(X)')
+	mach = machine(kmeans, X) |> fit!
 	
 	# cluster X into 5 clusters using K-means
 	#R = machine(train , 5; maxiter=200, display=:iter)
@@ -136,8 +136,25 @@ begin
 	#M = R.centers # get the cluster centers
 end
 
+# ╔═╡ 5cfda8cd-a5a0-43b2-a0e4-0b2a6b52ab7c
+begin
+	Xsmall = MLJ.transform(mach);
+	selectrows(Xsmall, 1:4) |> pretty
+	selectrows(Xsmall, 1:4) |> pretty
+end
+
 # ╔═╡ 4656e086-ea2d-4edf-b691-9716f6d41d0d
-mach
+# predicting:
+yhat = predict(mach)
+
+# ╔═╡ f4c70dce-84c1-472c-8e90-cec676621a2a
+data[!,:cluster] = yhat
+
+# ╔═╡ d69a9c51-4796-41bd-9ab4-f12354ffd3c2
+
+
+# ╔═╡ e3239243-ccd3-403a-be05-24ee8c43b766
+scatter(data[1:20000,:].date_time,data[1:20000,:].Voltage,  group=data[1:20000,:].cluster,)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1523,6 +1540,10 @@ version = "1.4.1+0"
 # ╠═fc4bd69b-0fb4-46b4-b1a5-fb95bb4990d5
 # ╠═e7f713c8-d56b-4b00-9a65-ba1b6411999f
 # ╠═f5cff6d6-3652-496c-afdf-b6bb4a70d203
+# ╠═5cfda8cd-a5a0-43b2-a0e4-0b2a6b52ab7c
 # ╠═4656e086-ea2d-4edf-b691-9716f6d41d0d
+# ╠═f4c70dce-84c1-472c-8e90-cec676621a2a
+# ╠═d69a9c51-4796-41bd-9ab4-f12354ffd3c2
+# ╠═e3239243-ccd3-403a-be05-24ee8c43b766
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
