@@ -140,7 +140,6 @@ end
 begin
 	Xsmall = MLJ.transform(mach);
 	selectrows(Xsmall, 1:4) |> pretty
-	selectrows(Xsmall, 1:4) |> pretty
 end
 
 # ╔═╡ 4656e086-ea2d-4edf-b691-9716f6d41d0d
