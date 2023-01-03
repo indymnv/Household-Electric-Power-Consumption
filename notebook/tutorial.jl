@@ -91,13 +91,28 @@ begin
         fc = cgrad([:white,:dodgerblue4]),
         xticks = (1:m,cols),
         xrot= 90,
-        size= (800, 800),
+        size= (500, 500),
         yticks = (1:m,cols),
         yflip=true)
     annotate!([(j, i, text(round(cm[i,j],digits=3),
                        8,"Computer Modern",:black))
            for i in 1:n for j in 1:m])
 end
+
+# ╔═╡ fc5f2226-eceb-47e5-9c50-a644fdf5a5d1
+schema(data)
+
+# ╔═╡ fc4bd69b-0fb4-46b4-b1a5-fb95bb4990d5
+begin
+	X = data[!, 3:9]
+	transformer_instance = Standardizer()
+	transformer_model = machine(transformer_instance, X)
+	fit!(transformer_model)
+	X = MLJ.transform(transformer_model, X);
+end
+
+# ╔═╡ f5cff6d6-3652-496c-afdf-b6bb4a70d203
+
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1444,5 +1459,8 @@ version = "1.4.1+0"
 # ╠═dbf401a8-5fe5-4206-ade9-1400f6599bd4
 # ╠═185e8de6-b136-45d3-9603-7cb62fe46a95
 # ╠═d90786bf-aab1-49bf-8b7b-82827c61da1b
+# ╠═fc5f2226-eceb-47e5-9c50-a644fdf5a5d1
+# ╠═fc4bd69b-0fb4-46b4-b1a5-fb95bb4990d5
+# ╠═f5cff6d6-3652-496c-afdf-b6bb4a70d203
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
