@@ -121,4 +121,3 @@ end
 
 plot([StatsPlots.plot(df[1:50000,col]; label = col) for col in ["Global_active_power",  "Global_reactive_power", "Global_intensity", "Voltage"]]...)
 
-ADFTest(df.Voltage, :none, 20)

@@ -1,16 +1,16 @@
 using DataFrames
-using StatsKit
 using CSV
 using DelimitedFiles
 
 #df = DataFrame(CSV.File("./data/household_power_consumption.txt"), normalizenames=true)
 function read_data()
     # Read the text file into a matrix
-    data = readdlm("./data/household_power_consumption.txt", ';',)
+    data = readdlm("../data/household_power_consumption.txt", ';',)
     # Convert the matrix to a dataframe
     df = DataFrame(data, :auto)
     rename!(df, Symbol.(Vector(df[1,:])))[2:end,:]
     df = df[2:end, :]
+    dropmissing!(df)
     #parsing Floats
     function ensure_floats(arr::Array{Any})
         output_arr = copy(arr)

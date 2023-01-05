@@ -18,6 +18,7 @@ begin
 	using MLJClusteringInterface
 	using ParallelKMeans
 	using Clustering
+	using FreqTables
 end
 
 # ╔═╡ 1c41d476-dda7-45b8-bc25-ec757244f932
@@ -27,8 +28,13 @@ begin
 	z = ZipFile.Reader(f)
 	z_by_filename = Dict( f.name => f for f in z.files)
 	data = CSV.read(z_by_filename["household_power_consumption.txt"], DataFrame,)
-	#df = parse_dataframe(data)
 end
+
+# ╔═╡ 3b7dd1cd-f2f7-4229-b0c4-4cdf7aea495a
+#begin
+#	include("../src/read.jl")
+#	data = read_data()
+#end
 
 # ╔═╡ 652f39e8-227c-4f6c-a9f0-7b576e8f89e8
 describe(data)
@@ -37,6 +43,8 @@ describe(data)
 dropmissing!(data)
 
 # ╔═╡ a4526d2f-5895-4468-aa43-1192b2dd50b5
+# This activate later when come back to reading from source
+
 begin
 	for i in 3:8
 		data[!,i] = parse.(Float64, data[!,i])
@@ -102,9 +110,6 @@ begin
            for i in 1:n for j in 1:m])
 end
 
-# ╔═╡ fc5f2226-eceb-47e5-9c50-a644fdf5a5d1
-schema(data)
-
 # ╔═╡ fc4bd69b-0fb4-46b4-b1a5-fb95bb4990d5
 begin
 	X = data[!, 3:9]
@@ -148,8 +153,25 @@ scatter(data[1:20000,:].date_time,data[1:20000,:].Voltage,  group=data[1:20000,:
 # ╔═╡ e34c100f-5107-4933-abed-ae25ad16d662
 plot([scatter(data[1:20000, :date_time],data[1:20000,col]; group=data[1:20000,:].cluster, size=(1200, 1000), title = col, xrot=30) for col in ["Global_active_power",  "Global_reactive_power", "Global_intensity", "Voltage", "Sub_metering_1",  "Sub_metering_2", "Sub_metering_3"]]...)
 
-# ╔═╡ 11a415ea-ce84-4f49-b9d6-7cf17599380d
+# ╔═╡ 4e5e989f-9cfa-4b04-87a4-9490a66d0c0d
+data
 
+# ╔═╡ 11a415ea-ce84-4f49-b9d6-7cf17599380d
+plot((freqtable(data,:dayofweek,:cluster))./freqtable(data,:dayofweek))
+
+# ╔═╡ d03f819a-5d53-4f31-8085-090dcea72fe0
+heatmap(freqtable(data,:cluster,:dayofweek)./freqtable(data,:cluster))
+
+# ╔═╡ 96537e89-f29d-4762-a300-2795d8febec6
+#freqtable(data,:hour,:cluster)
+heatmap(freqtable(data,:cluster,:hour)./freqtable(data,:cluster))
+
+# ╔═╡ d6ce46e6-8a7a-4e25-84d3-7b2a5059da84
+#freqtable(data,:month,:cluster)
+heatmap(freqtable(data,:cluster,:month)./freqtable(data,:cluster))
+
+# ╔═╡ 0d7c287b-f005-4087-8e3e-14faa692d6c1
+freqtable(data,:dayofweek)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -158,6 +180,7 @@ CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 Clustering = "aaaa29a8-35af-508c-8bc3-b662a17a0fe5"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+FreqTables = "da1fdf0e-e0ff-5433-a45f-9bb5ff651cb1"
 HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
 MLJ = "add582a8-e3ab-11e8-2d5e-e98b27df1bc7"
 MLJClusteringInterface = "d354fa79-ed1c-40d4-88ef-b8c7bd1568af"
@@ -171,6 +194,7 @@ ZipFile = "a5390f91-8eb1-5f08-bee0-b1d1ffed6cea"
 CSV = "~0.10.8"
 Clustering = "~0.14.3"
 DataFrames = "~1.4.4"
+FreqTables = "~0.4.5"
 HTTP = "~1.6.2"
 MLJ = "~0.19.0"
 MLJClusteringInterface = "~0.1.9"
@@ -186,7 +210,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.3"
 manifest_format = "2.0"
-project_hash = "0405b447da9a164b4981558cd17e1805760fba2d"
+project_hash = "97fa5c9a2568a0960644100b26a7bbf2e5004a31"
 
 [[deps.ARFFFiles]]
 deps = ["CategoricalArrays", "Dates", "Parsers", "Tables"]
@@ -478,6 +502,12 @@ deps = ["Artifacts", "Bzip2_jll", "JLLWrappers", "Libdl", "Pkg", "Zlib_jll"]
 git-tree-sha1 = "87eb71354d8ec1a96d4a7636bd57a7347dde3ef9"
 uuid = "d7e528f0-a631-5988-bf34-fe36492bcfd7"
 version = "2.10.4+0"
+
+[[deps.FreqTables]]
+deps = ["CategoricalArrays", "Missings", "NamedArrays", "Tables"]
+git-tree-sha1 = "488ad2dab30fd2727ee65451f790c81ed454666d"
+uuid = "da1fdf0e-e0ff-5433-a45f-9bb5ff651cb1"
+version = "0.4.5"
 
 [[deps.FriBidi_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -842,6 +872,12 @@ deps = ["OpenLibm_jll"]
 git-tree-sha1 = "a7c3d1da1189a1c2fe843a3bfa04d18d20eb3211"
 uuid = "77ba4419-2d1f-58cd-9bb1-8ffee604a2e3"
 version = "1.0.1"
+
+[[deps.NamedArrays]]
+deps = ["Combinatorics", "DataStructures", "DelimitedFiles", "InvertedIndices", "LinearAlgebra", "Random", "Requires", "SparseArrays", "Statistics"]
+git-tree-sha1 = "2fd5787125d1a93fbe30961bd841707b8a80d75b"
+uuid = "86f7a689-2022-50b4-a561-43c23ac3c673"
+version = "0.9.6"
 
 [[deps.NearestNeighbors]]
 deps = ["Distances", "StaticArrays"]
@@ -1520,6 +1556,7 @@ version = "1.4.1+0"
 # ╔═╡ Cell order:
 # ╠═a4ba2c57-8cf2-4bb7-800a-4839af64849c
 # ╠═1c41d476-dda7-45b8-bc25-ec757244f932
+# ╠═3b7dd1cd-f2f7-4229-b0c4-4cdf7aea495a
 # ╠═652f39e8-227c-4f6c-a9f0-7b576e8f89e8
 # ╠═62e02377-da4c-4381-9e59-4f32372f4fb5
 # ╠═a4526d2f-5895-4468-aa43-1192b2dd50b5
@@ -1531,13 +1568,17 @@ version = "1.4.1+0"
 # ╠═dbf401a8-5fe5-4206-ade9-1400f6599bd4
 # ╠═185e8de6-b136-45d3-9603-7cb62fe46a95
 # ╠═d90786bf-aab1-49bf-8b7b-82827c61da1b
-# ╠═fc5f2226-eceb-47e5-9c50-a644fdf5a5d1
 # ╠═fc4bd69b-0fb4-46b4-b1a5-fb95bb4990d5
 # ╠═e7f713c8-d56b-4b00-9a65-ba1b6411999f
 # ╠═f5cff6d6-3652-496c-afdf-b6bb4a70d203
 # ╠═9cadf7ab-428b-4c92-8aed-2995bc13b629
 # ╠═e3239243-ccd3-403a-be05-24ee8c43b766
 # ╠═e34c100f-5107-4933-abed-ae25ad16d662
+# ╠═4e5e989f-9cfa-4b04-87a4-9490a66d0c0d
 # ╠═11a415ea-ce84-4f49-b9d6-7cf17599380d
+# ╠═d03f819a-5d53-4f31-8085-090dcea72fe0
+# ╠═96537e89-f29d-4762-a300-2795d8febec6
+# ╠═d6ce46e6-8a7a-4e25-84d3-7b2a5059da84
+# ╠═0d7c287b-f005-4087-8e3e-14faa692d6c1
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
