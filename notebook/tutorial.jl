@@ -167,11 +167,16 @@ begin
 end
 
 # ╔═╡ 4e5e989f-9cfa-4b04-87a4-9490a66d0c0d
-@df data boxplot(string.(:cluster), :Global_active_power, fillalpha=0.75, linewidth=2)
-#@df data boxplot(:Global_active_power, group = :cluster,fillalpha=0.75, linewidth=2)
+begin
+	b1 =@df data boxplot(string.(:cluster), :Global_active_power, fillalpha=0.75, linewidth=2,)
+	b2 =@df data boxplot(string.(:cluster), :Global_reactive_power, fillalpha=0.75, linewidth=2)
+	b3 = @df data boxplot(string.(:cluster), :Global_intensity, fillalpha=0.75, linewidth=2)
+	b4 = @df data boxplot(string.(:cluster), :Voltage, fillalpha=0.75, linewidth=2)
 
-# ╔═╡ 11a415ea-ce84-4f49-b9d6-7cf17599380d
-plot((freqtable(data,:dayofweek,:cluster))./freqtable(data,:dayofweek))
+	#@df data boxplot(string.(:cluster), :Global_active_power, fillalpha=0.75, linewidth=2)
+	#@df data boxplot(string.(:cluster), :Global_active_power, fillalpha=0.75, linewidth=2)
+	plot(b1, b2, b3, b4 ,layout=(2,2), legend=false)
+end
 
 # ╔═╡ d03f819a-5d53-4f31-8085-090dcea72fe0
 heatmap(freqtable(data,:cluster,:dayofweek)./freqtable(data,:cluster))
@@ -185,7 +190,7 @@ heatmap(freqtable(data,:cluster,:hour)./freqtable(data,:cluster))
 heatmap(freqtable(data,:cluster,:month)./freqtable(data,:cluster))
 
 # ╔═╡ 0d7c287b-f005-4087-8e3e-14faa692d6c1
-freqtable(data,:dayofweek)
+heatmap(freqtable(data,:cluster,:day)./freqtable(data,:cluster))
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1719,7 +1724,6 @@ version = "1.4.1+0"
 # ╠═e34c100f-5107-4933-abed-ae25ad16d662
 # ╠═6a3e5035-445a-4f5d-9b0d-cedd251f2b6a
 # ╠═4e5e989f-9cfa-4b04-87a4-9490a66d0c0d
-# ╠═11a415ea-ce84-4f49-b9d6-7cf17599380d
 # ╠═d03f819a-5d53-4f31-8085-090dcea72fe0
 # ╠═96537e89-f29d-4762-a300-2795d8febec6
 # ╠═d6ce46e6-8a7a-4e25-84d3-7b2a5059da84
