@@ -160,8 +160,10 @@ begin
 	p2 = @df data density(:Global_reactive_power, group = (:cluster), legend = :topright, title = "Rective Power")
 	p3 = @df data density(:Global_intensity, group = (:cluster), legend = :topright , title = "Intensity")
 	p4 = @df data density(:Voltage, group = (:cluster), legend = :topright, title = "Voltage")
+	p5 = @df data density(:Sub_metering_1, group = (:cluster), legend = :topright, title = "Sub_1")
+	p6 = @df data density(:Sub_metering_2, group = (:cluster), legend = :topright, title = "Sub_2")
 	
-	plot(p1, p2, p3, p4, layout=(2,2), legend=true)
+	plot(p1, p2, p3, p4, p5, p6, layout=(3,2), legend=true)
 end
 
 # ╔═╡ 4e5e989f-9cfa-4b04-87a4-9490a66d0c0d
