@@ -155,7 +155,14 @@ scatter(data[1:20000,:].date_time,data[1:20000,:].Voltage,  group=data[1:20000,:
 plot([scatter(data[1:20000, :date_time],data[1:20000,col]; group=data[1:20000,:].cluster, size=(1200, 1000), title = col, xrot=30) for col in ["Global_active_power",  "Global_reactive_power", "Global_intensity", "Voltage", "Sub_metering_1",  "Sub_metering_2", "Sub_metering_3"]]...)
 
 # ╔═╡ 6a3e5035-445a-4f5d-9b0d-cedd251f2b6a
-@df data density(:Global_active_power, group = (:cluster), legend = :topleft)
+begin
+	p1 = @df data density(:Global_active_power, group = (:cluster), legend = :topright, title = "Active Power")
+	p2 = @df data density(:Global_reactive_power, group = (:cluster), legend = :topright, title = "Rective Power")
+	p3 = @df data density(:Global_intensity, group = (:cluster), legend = :topright , title = "Intensity")
+	p4 = @df data density(:Voltage, group = (:cluster), legend = :topright, title = "Voltage")
+	
+	plot(p1, p2, p3, p4, layout=(2,2), legend=true)
+end
 
 # ╔═╡ 4e5e989f-9cfa-4b04-87a4-9490a66d0c0d
 @df data boxplot(string.(:cluster), :Global_active_power, fillalpha=0.75, linewidth=2)
