@@ -211,11 +211,32 @@ begin
 	y_test = copy(test[!,:Global_active_power])
 end
 
+# ╔═╡ 6e1a56b7-69cd-46e3-9716-22f0bda1f2f7
+begin
+	train_coerced = coerce(train, 
+		:year=>OrderedFactor,
+		:month=>OrderedFactor,
+		:day=>OrderedFactor,
+		:hour=>OrderedFactor,
+		:minute=>OrderedFactor,
+		:dayofweek=>OrderedFactor,
+		:weeekend=>Multiclass);
+	
+	test_coerced = coerce(test, 
+		:year=>OrderedFactor,
+		:month=>OrderedFactor,
+		:day=>OrderedFactor,
+		:hour=>OrderedFactor,
+		:minute=>OrderedFactor,
+		:dayofweek=>OrderedFactor,
+		:weeekend=>Multiclass);
+end
+
 # ╔═╡ 697ceab0-82ba-44d1-9eab-277eae4622eb
 
 
 # ╔═╡ 31b3b547-2d43-463a-b189-ec361e5d65c0
-schema(test)
+schema(test_coerced)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1754,6 +1775,7 @@ version = "1.4.1+0"
 # ╠═d29bbac3-ee6d-47af-b8db-ab99f5b030b4
 # ╠═60895046-09c1-4cc7-8528-35470e7eba09
 # ╠═3b811c60-a918-43fd-bd14-1e0bad0aba1f
+# ╠═6e1a56b7-69cd-46e3-9716-22f0bda1f2f7
 # ╠═697ceab0-82ba-44d1-9eab-277eae4622eb
 # ╠═31b3b547-2d43-463a-b189-ec361e5d65c0
 # ╟─00000000-0000-0000-0000-000000000001
