@@ -190,6 +190,21 @@ begin
 	plot(h1, h2, h3, h4 ,layout=(2,2), legend=false)
 end
 
+# ╔═╡ 8b724949-3388-4757-b8d3-55b66a296aac
+data
+
+# ╔═╡ d29bbac3-ee6d-47af-b8db-ab99f5b030b4
+begin
+	train = filter(x -> x.Date < Date(2010,10,01), data)
+	test = filter(x -> x.Date >= Date(2010,10,01), data)
+end
+
+# ╔═╡ 60895046-09c1-4cc7-8528-35470e7eba09
+test
+
+# ╔═╡ 697ceab0-82ba-44d1-9eab-277eae4622eb
+
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -229,7 +244,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.3"
 manifest_format = "2.0"
-project_hash = "a2952a668c0e2c3d33540b0f1a0dccea4ce38e33"
+project_hash = "dba990fcf45a9dffb4d621b6a828217a789bc681"
 
 [[deps.ARFFFiles]]
 deps = ["CategoricalArrays", "Dates", "Parsers", "Tables"]
@@ -300,7 +315,7 @@ uuid = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 version = "0.10.8"
 
 [[deps.Cairo_jll]]
-deps = ["Artifacts", "Bzip2_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll", "JLLWrappers", "LZO_jll", "Libdl", "Pixman_jll", "Pkg", "Xorg_libXext_jll", "Xorg_libXrender_jll", "Zlib_jll", "libpng_jll"]
+deps = ["Artifacts", "Bzip2_jll", "CompilerSupportLibraries_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll", "JLLWrappers", "LZO_jll", "Libdl", "Pixman_jll", "Pkg", "Xorg_libXext_jll", "Xorg_libXrender_jll", "Zlib_jll", "libpng_jll"]
 git-tree-sha1 = "4b859a208b2397a7a623a03449e4636bdb17bcf2"
 uuid = "83423d85-b0ee-5818-9007-b63ccbeb887a"
 version = "1.16.1+1"
@@ -1723,5 +1738,9 @@ version = "1.4.1+0"
 # ╠═6a3e5035-445a-4f5d-9b0d-cedd251f2b6a
 # ╠═4e5e989f-9cfa-4b04-87a4-9490a66d0c0d
 # ╠═3b1f7548-4e85-40b2-b6d9-1dfcba6e49ab
+# ╠═8b724949-3388-4757-b8d3-55b66a296aac
+# ╠═d29bbac3-ee6d-47af-b8db-ab99f5b030b4
+# ╠═60895046-09c1-4cc7-8528-35470e7eba09
+# ╠═697ceab0-82ba-44d1-9eab-277eae4622eb
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
