@@ -195,15 +195,27 @@ data
 
 # ╔═╡ d29bbac3-ee6d-47af-b8db-ab99f5b030b4
 begin
-	train = filter(x -> x.Date < Date(2010,10,01), data)
-	test = filter(x -> x.Date >= Date(2010,10,01), data)
+	train = copy(filter(x -> x.Date < Date(2010,10,01), data))
+	test = copy(filter(x -> x.Date >= Date(2010,10,01), data))
 end
 
 # ╔═╡ 60895046-09c1-4cc7-8528-35470e7eba09
-test
+begin
+	select!(train, Not([:Date, :Time, :date_time, :cluster]))
+	select!(test, Not([:Date, :Time, :date_time, :cluster]))
+end
+
+# ╔═╡ 3b811c60-a918-43fd-bd14-1e0bad0aba1f
+begin
+	y_train = copy(train[!,:Global_active_power])
+	y_test = copy(test[!,:Global_active_power])
+end
 
 # ╔═╡ 697ceab0-82ba-44d1-9eab-277eae4622eb
 
+
+# ╔═╡ 31b3b547-2d43-463a-b189-ec361e5d65c0
+schema(test)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1741,6 +1753,8 @@ version = "1.4.1+0"
 # ╠═8b724949-3388-4757-b8d3-55b66a296aac
 # ╠═d29bbac3-ee6d-47af-b8db-ab99f5b030b4
 # ╠═60895046-09c1-4cc7-8528-35470e7eba09
+# ╠═3b811c60-a918-43fd-bd14-1e0bad0aba1f
 # ╠═697ceab0-82ba-44d1-9eab-277eae4622eb
+# ╠═31b3b547-2d43-463a-b189-ec361e5d65c0
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
