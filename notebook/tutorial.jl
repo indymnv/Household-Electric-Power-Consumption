@@ -65,13 +65,13 @@ begin
 	data[!,:date_time] = date_time
 	
 	#Create variable for date
-	data[!,:year] = Year.(data[!,1])
-	data[!,:month] = Month.(data[!,1])
-	data[!,:day] = Day.(data[!,1])
+	data[!,:year] = Dates.value.(Year.(data[!,1]))
+	data[!,:month] = Dates.value.(Month.(data[!,1]))
+	data[!,:day] = Dates.value.(Day.(data[!,1]))
 	
 	#Create variable for time
-	data[!, :hour] = Hour.(data[!,2])
-	data[!, :minute] = Minute.(data[!,2])
+	data[!, :hour] = Dates.value.(Hour.(data[!,2]))
+	data[!, :minute] = Dates.value.(Minute.(data[!,2]))
 	
 	#Create variable for weekends
 	data[!, :dayofweek] = [dayofweek(date) for date in data.Date]
@@ -236,7 +236,7 @@ end
 schema(test_coerced)
 
 # ╔═╡ 8a186f25-06e7-458c-9d43-7a1d495c7a4d
-
+train
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
