@@ -212,6 +212,24 @@ begin
 	y_test = copy(test[!,:Global_active_power])
 end
 
+# ╔═╡ 2de3e03c-c4e6-46d8-8b89-e929e35cd4b3
+function cyclical_encoder(df::DataFrame, columns::Union{Array, Symbol}; max_val::Real 							= nothing)
+    if max_val == nothing
+        max_val = maximum(df[:, columns])
+    end
+    for column in columns
+        df[:, Symbol(string(column) * "_sin")] = sin.(2*pi*df[:, column]/max_val)
+        df[:, Symbol(string(column) * "_cos")] = cos.(2*pi*df[:, column]/max_val)
+    end
+    return df
+end
+
+# ╔═╡ c8e9ef42-0d32-4ecf-a35b-fcf544091cf7
+typeof([:day, :year, :month, :hour, :minute, :dayofweek])
+
+# ╔═╡ 6610f46e-5475-4865-b690-cdde061b467e
+train_cyclical = cyclical_encoder(train, [:day, :year, :month, :hour, :minute, :dayofweek], )
+
 # ╔═╡ 6e1a56b7-69cd-46e3-9716-22f0bda1f2f7
 begin
 	train_coerced = coerce(train, 
@@ -239,7 +257,7 @@ schema(test_coerced)
 # ╔═╡ 95667564-9d8a-45ca-a5c8-b5baad187f4b
 begin
 	EvoTreeRegressor = @load EvoTreeRegressor pkg=EvoTrees verbosity=0
-	etr = EvoTreeRegressor(max_depth =21)
+	etr = EvoTreeRegressor(max_depth =5)
 	
 	machreg = machine(etr, train[!,8:14], y_train);
 
@@ -316,7 +334,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.3"
 manifest_format = "2.0"
-project_hash = "558c9456ec01ee874c0d3300173dec6c894e4d61"
+project_hash = "5439b29ab949894c4ef653a3beb2b5378da2cfe6"
 
 [[deps.ARFFFiles]]
 deps = ["CategoricalArrays", "Dates", "Parsers", "Tables"]
@@ -2077,6 +2095,9 @@ version = "1.4.1+0"
 # ╠═d29bbac3-ee6d-47af-b8db-ab99f5b030b4
 # ╠═60895046-09c1-4cc7-8528-35470e7eba09
 # ╠═3b811c60-a918-43fd-bd14-1e0bad0aba1f
+# ╠═2de3e03c-c4e6-46d8-8b89-e929e35cd4b3
+# ╠═c8e9ef42-0d32-4ecf-a35b-fcf544091cf7
+# ╠═6610f46e-5475-4865-b690-cdde061b467e
 # ╠═6e1a56b7-69cd-46e3-9716-22f0bda1f2f7
 # ╠═31b3b547-2d43-463a-b189-ec361e5d65c0
 # ╠═95667564-9d8a-45ca-a5c8-b5baad187f4b
