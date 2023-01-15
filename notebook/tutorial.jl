@@ -213,64 +213,78 @@ begin
 end
 
 # ╔═╡ 2de3e03c-c4e6-46d8-8b89-e929e35cd4b3
-function cyclical_encoder(df::DataFrame, columns::Union{Array, Symbol}; )
-    for column in columns
-		max_val = maximum(df[:, column])
-        df[:, Symbol(string(column) * "_sin")] = sin.(2*pi*df[:, column]/max_val)
-        df[:, Symbol(string(column) * "_cos")] = cos.(2*pi*df[:, column]/max_val)
+function cyclical_encoder(df::DataFrame, columns::Union{Array, Symbol}, max_val::Union{Array, Int} )
+    for (column, max) in zip(columns, max_val)
+		#max_val = maximum(df[:, column])
+        df[:, Symbol(string(column) * "_sin")] = sin.(2*pi*df[:, column]/max)
+        df[:, Symbol(string(column) * "_cos")] = cos.(2*pi*df[:, column]/max)
     end
     return df
 end
 
 # ╔═╡ c8e9ef42-0d32-4ecf-a35b-fcf544091cf7
-typeof([:day, :year, :month, :hour, :minute, :dayofweek])
+maximum(data[!,:dayofweek])
 
 # ╔═╡ 6610f46e-5475-4865-b690-cdde061b467e
 begin
-	columns_selected = [:day, :year, :month, :hour, :minute, :dayofweek] 
-	train_cyclical = cyclical_encoder(train, columns_selected,)
+	columns_selected = [:day, :year, :month, :hour, :minute, :dayofweek]
+	max_val = [31, 2010, 12, 23, 59, 7]
+	train_cyclical = cyclical_encoder(train, columns_selected, max_val)
+	test_cyclical = cyclical_encoder(test, columns_selected, max_val)
 end
 
 # ╔═╡ 43172899-ccd9-48d6-b3fd-ed9a3add8833
-train_cyclical
+names(train_cyclical)
 
 # ╔═╡ 6e1a56b7-69cd-46e3-9716-22f0bda1f2f7
 begin
 	train_coerced = coerce(train, 
-		:year=>OrderedFactor,
-		:month=>OrderedFactor,
-		:day=>OrderedFactor,
-		:hour=>OrderedFactor,
-		:minute=>OrderedFactor,
-		:dayofweek=>OrderedFactor,
+		:year_sin=>Continuous,
+		:month_sin=>Continuous,
+		:day_sin=>Continuous,
+		:hour_sin=>Continuous,
+		:minute_sin=>Continuous,
+		:dayofweek_sin=>Continuous,
+		:year_cos=>Continuous,
+		:month_cos=>Continuous,
+		:day_cos=>Continuous,
+		:hour_cos=>Continuous,
+		:minute_cos=>Continuous,
+		:dayofweek_cos=>Continuous,
 		:weeekend=>Multiclass);
 	
 	test_coerced = coerce(test, 
-		:year=>OrderedFactor,
-		:month=>OrderedFactor,
-		:day=>OrderedFactor,
-		:hour=>OrderedFactor,
-		:minute=>OrderedFactor,
-		:dayofweek=>OrderedFactor,
+		:year_sin=>Continuous,
+		:month_sin=>Continuous,
+		:day_sin=>Continuous,
+		:hour_sin=>Continuous,
+		:minute_sin=>Continuous,
+		:dayofweek_sin=>Continuous,
+		:year_cos=>Continuous,
+		:month_cos=>Continuous,
+		:day_cos=>Continuous,
+		:hour_cos=>Continuous,
+		:minute_cos=>Continuous,
+		:dayofweek_cos=>Continuous,
 		:weeekend=>Multiclass);
 end
 
-# ╔═╡ 31b3b547-2d43-463a-b189-ec361e5d65c0
-schema(test_coerced)
+# ╔═╡ 13935b3c-b7b1-496c-b62b-cec377b4512f
+test_coerced
 
 # ╔═╡ 95667564-9d8a-45ca-a5c8-b5baad187f4b
 begin
 	EvoTreeRegressor = @load EvoTreeRegressor pkg=EvoTrees verbosity=0
-	etr = EvoTreeRegressor(max_depth =5)
+	etr = EvoTreeRegressor(max_depth =12)
 	
-	machreg = machine(etr, train[!,8:14], y_train);
+	machreg = machine(etr, train_coerced[!,14:26], y_train);
 
 	fit!(machreg);
 end
 
 # ╔═╡ 8b65a47d-8717-4ce0-85dc-353c9dcb16b2
 begin
-	pred_etr = predict(machreg, test[!,8:14]);
+	pred_etr = predict(machreg, test_coerced[!,14:26]);
 	rms_score = rms(pred_etr, y_test)
 end
 
@@ -292,10 +306,16 @@ end
   ╠═╡ =#
 
 # ╔═╡ abca48a9-c9d0-4726-a3df-b0801371241a
-scatter( y_test, pred_etr, title = "error plot $rms_score")
+begin
+	er1=histogram( y_test - pred_etr, title = "error rms $rms_score", bins= 20)
+	er2 = scatter( y_test , pred_etr, )
+	
+	plot(er1, er2, layout=(1,2), legend=false)
+	
+end
 
 # ╔═╡ 8fc811e6-8644-4d66-bc50-a49b4da56d64
-pred_etr
+test_coerced
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -2104,7 +2124,7 @@ version = "1.4.1+0"
 # ╠═6610f46e-5475-4865-b690-cdde061b467e
 # ╠═43172899-ccd9-48d6-b3fd-ed9a3add8833
 # ╠═6e1a56b7-69cd-46e3-9716-22f0bda1f2f7
-# ╠═31b3b547-2d43-463a-b189-ec361e5d65c0
+# ╠═13935b3c-b7b1-496c-b62b-cec377b4512f
 # ╠═95667564-9d8a-45ca-a5c8-b5baad187f4b
 # ╠═8b65a47d-8717-4ce0-85dc-353c9dcb16b2
 # ╠═8a186f25-06e7-458c-9d43-7a1d495c7a4d
