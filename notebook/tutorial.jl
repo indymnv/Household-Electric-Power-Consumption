@@ -22,6 +22,7 @@ begin
 	using FreqTables
 	using StatsPlots
 	using RollingFunctions
+	using StatsBase
 end
 
 # ╔═╡ 1c41d476-dda7-45b8-bc25-ec757244f932
@@ -83,14 +84,8 @@ end
 # ╔═╡ 82f8cfc4-41e2-479a-8f2e-d60c8e4bf23d
 data
 
-# ╔═╡ 9ca9f15b-d276-4844-ab80-d7a997ca69cc
-plot(data.date_time,data.Voltage)
-
 # ╔═╡ 0100421c-dea1-4ec4-a622-b96ac3a9775e
 plot([plot(data[1:50000,col]; label = col) for col in ["Global_active_power",  "Global_reactive_power", "Global_intensity", "Voltage"]]...)
-
-# ╔═╡ dbf401a8-5fe5-4206-ade9-1400f6599bd4
-plot([plot(data[1:50000, :date_time],data[1:50000,col]; label = col, xrot=45) for col in ["Sub_metering_1",  "Sub_metering_2", "Sub_metering_3"]]...)
 
 # ╔═╡ 185e8de6-b136-45d3-9603-7cb62fe46a95
 plot([plot(data[1:50000, :date_time],data[1:50000,col]; label = col, xrot=30) for col in ["Global_active_power",  "Global_reactive_power", "Global_intensity", "Voltage", "Sub_metering_1",  "Sub_metering_2", "Sub_metering_3"]]...)
@@ -138,7 +133,7 @@ begin
 	#R = machine(train , 5; maxiter=200, display=:iter)
 	Xsmall = MLJ.transform(mach);
 	selectrows(Xsmall, 1:4) |> pretty
-	yhat = predict(mach)
+	yhat = MLJ.predict(mach)
 	data[!,:cluster] = yhat
 	#@assert nclusters(R) == 5 # verify the number of clusters
 	
@@ -193,7 +188,11 @@ begin
 end
 
 # ╔═╡ 8b724949-3388-4757-b8d3-55b66a296aac
-data
+begin
+	plot(data.Global_active_power)
+	plot!(rollmean(data.Global_active_power, 25))
+	
+end
 
 # ╔═╡ d29bbac3-ee6d-47af-b8db-ab99f5b030b4
 begin
@@ -282,7 +281,7 @@ end
 
 # ╔═╡ 8b65a47d-8717-4ce0-85dc-353c9dcb16b2
 begin
-	pred_etr = predict(machreg, test_coerced[!,14:26]);
+	pred_etr = MLJ.predict(machreg, test_coerced[!,14:26]);
 	rms_score = rms(pred_etr, y_test)
 end
 
@@ -308,6 +307,7 @@ begin
 	er1=histogram( y_test - pred_etr, title = "error rms $rms_score", bins= 20)
 	er2 = scatter( y_test , pred_etr, )
 	
+	
 	plot(er1, er2, layout=(1,2), legend=false)
 	
 end
@@ -317,6 +317,9 @@ begin
 	plot(y_test, label = "real")
 	plot!(pred_etr, label= "predict")
 end
+
+# ╔═╡ 41f8144f-d87e-41f4-b209-237285379fa9
+
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -334,6 +337,7 @@ ParallelKMeans = "42b8e9d4-006b-409a-8472-7f34b3fb58af"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 RollingFunctions = "b0e4dd01-7b14-53d8-9b45-175a3e362653"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 StatsPlots = "f3b207a7-027a-5e70-b257-86293d7955fd"
 UrlDownload = "856ac37a-3032-4c1c-9122-f86d88358c8b"
 ZipFile = "a5390f91-8eb1-5f08-bee0-b1d1ffed6cea"
@@ -350,6 +354,7 @@ MLJClusteringInterface = "~0.1.9"
 ParallelKMeans = "~1.0.1"
 Plots = "~1.38.1"
 RollingFunctions = "~0.7.0"
+StatsBase = "~0.33.21"
 StatsPlots = "~0.15.4"
 UrlDownload = "~1.0.1"
 ZipFile = "~0.10.1"
@@ -361,7 +366,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.3"
 manifest_format = "2.0"
-project_hash = "4c84f77920341ddfedc04ab8fbc7434954ab2466"
+project_hash = "7cc223cb9d4ce85b4435a7b8f8751c63b581202d"
 
 [[deps.ARFFFiles]]
 deps = ["CategoricalArrays", "Dates", "Parsers", "Tables"]
@@ -2121,9 +2126,7 @@ version = "1.4.1+0"
 # ╠═b20e5a78-3c5c-4ae8-b49c-38d3eaf1bba1
 # ╠═2364d69b-f093-4fa0-a366-96c4091660bf
 # ╠═82f8cfc4-41e2-479a-8f2e-d60c8e4bf23d
-# ╠═9ca9f15b-d276-4844-ab80-d7a997ca69cc
 # ╠═0100421c-dea1-4ec4-a622-b96ac3a9775e
-# ╠═dbf401a8-5fe5-4206-ade9-1400f6599bd4
 # ╠═185e8de6-b136-45d3-9603-7cb62fe46a95
 # ╠═d90786bf-aab1-49bf-8b7b-82827c61da1b
 # ╠═fc4bd69b-0fb4-46b4-b1a5-fb95bb4990d5
@@ -2149,5 +2152,6 @@ version = "1.4.1+0"
 # ╠═8a186f25-06e7-458c-9d43-7a1d495c7a4d
 # ╠═abca48a9-c9d0-4726-a3df-b0801371241a
 # ╠═8fc811e6-8644-4d66-bc50-a49b4da56d64
+# ╠═41f8144f-d87e-41f4-b209-237285379fa9
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
