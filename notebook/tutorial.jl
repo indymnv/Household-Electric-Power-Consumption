@@ -21,6 +21,7 @@ begin
 	using Clustering
 	using FreqTables
 	using StatsPlots
+	using RollingFunctions
 end
 
 # ╔═╡ 1c41d476-dda7-45b8-bc25-ec757244f932
@@ -222,9 +223,6 @@ function cyclical_encoder(df::DataFrame, columns::Union{Array, Symbol}, max_val:
     return df
 end
 
-# ╔═╡ c8e9ef42-0d32-4ecf-a35b-fcf544091cf7
-maximum(data[!,:dayofweek])
-
 # ╔═╡ 6610f46e-5475-4865-b690-cdde061b467e
 begin
 	columns_selected = [:day, :year, :month, :hour, :minute, :dayofweek]
@@ -316,8 +314,8 @@ end
 
 # ╔═╡ 8fc811e6-8644-4d66-bc50-a49b4da56d64
 begin
-	plot(y_test)
-	plot!(pred_etr)
+	plot(y_test, label = "real")
+	plot!(pred_etr, label= "predict")
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -334,6 +332,7 @@ MLJ = "add582a8-e3ab-11e8-2d5e-e98b27df1bc7"
 MLJClusteringInterface = "d354fa79-ed1c-40d4-88ef-b8c7bd1568af"
 ParallelKMeans = "42b8e9d4-006b-409a-8472-7f34b3fb58af"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+RollingFunctions = "b0e4dd01-7b14-53d8-9b45-175a3e362653"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 StatsPlots = "f3b207a7-027a-5e70-b257-86293d7955fd"
 UrlDownload = "856ac37a-3032-4c1c-9122-f86d88358c8b"
@@ -350,6 +349,7 @@ MLJ = "~0.19.1"
 MLJClusteringInterface = "~0.1.9"
 ParallelKMeans = "~1.0.1"
 Plots = "~1.38.1"
+RollingFunctions = "~0.7.0"
 StatsPlots = "~0.15.4"
 UrlDownload = "~1.0.1"
 ZipFile = "~0.10.1"
@@ -361,7 +361,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.3"
 manifest_format = "2.0"
-project_hash = "558c9456ec01ee874c0d3300173dec6c894e4d61"
+project_hash = "4c84f77920341ddfedc04ab8fbc7434954ab2466"
 
 [[deps.ARFFFiles]]
 deps = ["CategoricalArrays", "Dates", "Parsers", "Tables"]
@@ -374,6 +374,12 @@ deps = ["ChainRulesCore", "LinearAlgebra"]
 git-tree-sha1 = "69f7020bd72f069c219b5e8c236c1fa90d2cb409"
 uuid = "621f4979-c628-5d54-868e-fcf4e3e8185c"
 version = "1.2.1"
+
+[[deps.AccurateArithmetic]]
+deps = ["LinearAlgebra", "Random", "VectorizationBase"]
+git-tree-sha1 = "07af26e8d08c211ef85918f3e25d4c0990d20d70"
+uuid = "22286c92-06ac-501d-9306-4abd417d9753"
+version = "0.3.8"
 
 [[deps.Adapt]]
 deps = ["LinearAlgebra"]
@@ -1018,6 +1024,11 @@ git-tree-sha1 = "b53380851c6e6664204efb2e62cd24fa5c47e4ba"
 uuid = "aacddb02-875f-59d6-b918-886e6ef4fbf8"
 version = "2.1.2+0"
 
+[[deps.KahanSummation]]
+git-tree-sha1 = "6292e7878fe190651e74148edb11356dbbc2e194"
+uuid = "8e2b3108-d4c1-50be-a7a2-16352aec75c3"
+version = "0.3.1"
+
 [[deps.KernelDensity]]
 deps = ["Distributions", "DocStringExtensions", "FFTW", "Interpolations", "StatsBase"]
 git-tree-sha1 = "9816b296736292a80b9a3200eb7fbb57aaa3917a"
@@ -1562,6 +1573,12 @@ deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "68db32dff12bb6127bac73c209881191bf0efbb7"
 uuid = "f50d1b31-88e8-58de-be2c-1cc44531875f"
 version = "0.3.0+0"
+
+[[deps.RollingFunctions]]
+deps = ["AccurateArithmetic", "KahanSummation", "LinearAlgebra", "LoopVectorization", "Statistics", "StatsBase"]
+git-tree-sha1 = "32e8f64eab12eccd7ef87916c1a050291f122ac4"
+uuid = "b0e4dd01-7b14-53d8-9b45-175a3e362653"
+version = "0.7.0"
 
 [[deps.SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
@@ -2123,7 +2140,6 @@ version = "1.4.1+0"
 # ╠═60895046-09c1-4cc7-8528-35470e7eba09
 # ╠═3b811c60-a918-43fd-bd14-1e0bad0aba1f
 # ╠═2de3e03c-c4e6-46d8-8b89-e929e35cd4b3
-# ╠═c8e9ef42-0d32-4ecf-a35b-fcf544091cf7
 # ╠═6610f46e-5475-4865-b690-cdde061b467e
 # ╠═43172899-ccd9-48d6-b3fd-ed9a3add8833
 # ╠═6e1a56b7-69cd-46e3-9716-22f0bda1f2f7
