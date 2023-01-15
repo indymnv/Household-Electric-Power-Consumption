@@ -315,7 +315,10 @@ begin
 end
 
 # ╔═╡ 8fc811e6-8644-4d66-bc50-a49b4da56d64
-test_coerced
+begin
+	plot(y_test)
+	plot!(pred_etr)
+end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
