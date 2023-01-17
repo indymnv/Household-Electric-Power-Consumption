@@ -196,10 +196,13 @@ begin
 end
 
 # ╔═╡ d5c80f35-b750-41c1-8a30-9cb89c59f5aa
-data[!, :lag_30] = ShiftedArray(data.Global_active_power, 30)
+data[!, :lag_30] = Array(ShiftedArray(data.Global_active_power, 30))
+
+# ╔═╡ e8259bf0-f702-4ef1-97cc-2419f3564ff1
+data.lag_30
 
 # ╔═╡ 2f295092-b0fe-441b-996b-3414be28fcc0
-last(data, 31)
+replace!(data.lag_30, missing => 0);
 
 # ╔═╡ d29bbac3-ee6d-47af-b8db-ab99f5b030b4
 begin
@@ -242,7 +245,7 @@ names(train_cyclical)
 
 # ╔═╡ 6e1a56b7-69cd-46e3-9716-22f0bda1f2f7
 begin
-	train_coerced = coerce(train, 
+	train_coerced = coerce(train_cyclical, 
 		:year_sin=>Continuous,
 		:month_sin=>Continuous,
 		:day_sin=>Continuous,
@@ -255,9 +258,10 @@ begin
 		:hour_cos=>Continuous,
 		:minute_cos=>Continuous,
 		:dayofweek_cos=>Continuous,
+		:lag_30=>Continuous,
 		:weeekend=>Multiclass);
 	
-	test_coerced = coerce(test, 
+	test_coerced = coerce(test_cyclical, 
 		:year_sin=>Continuous,
 		:month_sin=>Continuous,
 		:day_sin=>Continuous,
@@ -270,6 +274,7 @@ begin
 		:hour_cos=>Continuous,
 		:minute_cos=>Continuous,
 		:dayofweek_cos=>Continuous,
+		:lag_30=>Continuous,
 		:weeekend=>Multiclass);
 end
 
@@ -281,7 +286,7 @@ begin
 	EvoTreeRegressor = @load EvoTreeRegressor pkg=EvoTrees verbosity=0
 	etr = EvoTreeRegressor(max_depth =12)
 	
-	machreg = machine(etr, train_coerced[!,14:26], y_train);
+	machreg = machine(etr, train_coerced[!,14:27], y_train);
 
 	fit!(machreg);
 end
@@ -2154,6 +2159,7 @@ version = "1.4.1+0"
 # ╠═3b1f7548-4e85-40b2-b6d9-1dfcba6e49ab
 # ╠═8b724949-3388-4757-b8d3-55b66a296aac
 # ╠═d5c80f35-b750-41c1-8a30-9cb89c59f5aa
+# ╠═e8259bf0-f702-4ef1-97cc-2419f3564ff1
 # ╠═2f295092-b0fe-441b-996b-3414be28fcc0
 # ╠═d29bbac3-ee6d-47af-b8db-ab99f5b030b4
 # ╠═60895046-09c1-4cc7-8528-35470e7eba09
