@@ -23,6 +23,7 @@ begin
 	using StatsPlots
 	using RollingFunctions
 	using StatsBase
+	using ShiftedArrays
 end
 
 # ╔═╡ 1c41d476-dda7-45b8-bc25-ec757244f932
@@ -194,6 +195,12 @@ begin
 	
 end
 
+# ╔═╡ d5c80f35-b750-41c1-8a30-9cb89c59f5aa
+data[!, :lag_30] = ShiftedArray(data.Global_active_power, 30)
+
+# ╔═╡ 2f295092-b0fe-441b-996b-3414be28fcc0
+last(data, 31)
+
 # ╔═╡ d29bbac3-ee6d-47af-b8db-ab99f5b030b4
 begin
 	train = copy(filter(x -> x.Date < Date(2010,10,01), data))
@@ -336,6 +343,7 @@ MLJClusteringInterface = "d354fa79-ed1c-40d4-88ef-b8c7bd1568af"
 ParallelKMeans = "42b8e9d4-006b-409a-8472-7f34b3fb58af"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 RollingFunctions = "b0e4dd01-7b14-53d8-9b45-175a3e362653"
+ShiftedArrays = "1277b4bf-5013-50f5-be3d-901d8477a67a"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 StatsPlots = "f3b207a7-027a-5e70-b257-86293d7955fd"
@@ -354,6 +362,7 @@ MLJClusteringInterface = "~0.1.9"
 ParallelKMeans = "~1.0.1"
 Plots = "~1.38.1"
 RollingFunctions = "~0.7.0"
+ShiftedArrays = "~2.0.0"
 StatsBase = "~0.33.21"
 StatsPlots = "~0.15.4"
 UrlDownload = "~1.0.1"
@@ -366,7 +375,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.3"
 manifest_format = "2.0"
-project_hash = "7cc223cb9d4ce85b4435a7b8f8751c63b581202d"
+project_hash = "91d70e9a3c1f219f0a65f228d47d3bdcfd0636fb"
 
 [[deps.ARFFFiles]]
 deps = ["CategoricalArrays", "Dates", "Parsers", "Tables"]
@@ -1636,6 +1645,11 @@ uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
 deps = ["Distributed", "Mmap", "Random", "Serialization"]
 uuid = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
 
+[[deps.ShiftedArrays]]
+git-tree-sha1 = "503688b59397b3307443af35cd953a13e8005c16"
+uuid = "1277b4bf-5013-50f5-be3d-901d8477a67a"
+version = "2.0.0"
+
 [[deps.Showoff]]
 deps = ["Dates", "Grisu"]
 git-tree-sha1 = "91eddf657aca81df9ae6ceb20b959ae5653ad1de"
@@ -2139,6 +2153,8 @@ version = "1.4.1+0"
 # ╠═4e5e989f-9cfa-4b04-87a4-9490a66d0c0d
 # ╠═3b1f7548-4e85-40b2-b6d9-1dfcba6e49ab
 # ╠═8b724949-3388-4757-b8d3-55b66a296aac
+# ╠═d5c80f35-b750-41c1-8a30-9cb89c59f5aa
+# ╠═2f295092-b0fe-441b-996b-3414be28fcc0
 # ╠═d29bbac3-ee6d-47af-b8db-ab99f5b030b4
 # ╠═60895046-09c1-4cc7-8528-35470e7eba09
 # ╠═3b811c60-a918-43fd-bd14-1e0bad0aba1f
