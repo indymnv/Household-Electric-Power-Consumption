@@ -279,7 +279,7 @@ begin
 end
 
 # ╔═╡ 13935b3c-b7b1-496c-b62b-cec377b4512f
-test_coerced
+train_coerced
 
 # ╔═╡ 95667564-9d8a-45ca-a5c8-b5baad187f4b
 begin
@@ -293,7 +293,7 @@ end
 
 # ╔═╡ 8b65a47d-8717-4ce0-85dc-353c9dcb16b2
 begin
-	pred_etr = MLJ.predict(machreg, test_coerced[!,14:26]);
+	pred_etr = MLJ.predict(machreg, test_coerced[!,14:27]);
 	rms_score = rms(pred_etr, y_test)
 end
 
@@ -331,7 +331,7 @@ begin
 end
 
 # ╔═╡ 41f8144f-d87e-41f4-b209-237285379fa9
-
+plot(test.Voltage, label = "real")
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
