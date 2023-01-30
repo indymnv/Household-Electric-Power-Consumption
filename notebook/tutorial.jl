@@ -26,6 +26,21 @@ begin
 	using ShiftedArrays
 end
 
+# ╔═╡ 34f74a05-818c-4cdf-ac7c-a74b7a478329
+md"""
+# Using evotrees.jl for time series prediction
+"""
+
+# ╔═╡ 09d06610-9b0e-428e-8b99-55f8bf0de376
+md"""
+###### In this notebook I want to explore and show you how you can use evotrees for a time series prediction. At the same time, this notebooks provide different methods to get a feature engineering elements to improve the model's performance
+"""
+
+# ╔═╡ 9be44075-dc61-4957-a761-e54315f91d2b
+md"""
+Let's import our libraries
+"""
+
 # ╔═╡ 1c41d476-dda7-45b8-bc25-ec757244f932
 begin
 	data_url = "https://archive.ics.uci.edu/ml/machine-learning-databases/00235/household_power_consumption.zip"
@@ -286,14 +301,14 @@ begin
 	EvoTreeRegressor = @load EvoTreeRegressor pkg=EvoTrees verbosity=0
 	etr = EvoTreeRegressor(max_depth =12)
 	
-	machreg = machine(etr, train_coerced[!,14:27], y_train);
+	machreg = machine(etr, train_coerced[!,14:end], y_train);
 
 	fit!(machreg);
 end
 
 # ╔═╡ 8b65a47d-8717-4ce0-85dc-353c9dcb16b2
 begin
-	pred_etr = MLJ.predict(machreg, test_coerced[!,14:27]);
+	pred_etr = MLJ.predict(machreg, test_coerced[!,14:end]);
 	rms_score = rms(pred_etr, y_test)
 end
 
@@ -329,9 +344,6 @@ begin
 	plot(y_test, label = "real")
 	plot!(pred_etr, label= "predict")
 end
-
-# ╔═╡ 41f8144f-d87e-41f4-b209-237285379fa9
-plot(test.Voltage, label = "real")
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -380,7 +392,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.3"
 manifest_format = "2.0"
-project_hash = "91d70e9a3c1f219f0a65f228d47d3bdcfd0636fb"
+project_hash = "227339e4cae1f5653ac17d9ac2216342ffa54d27"
 
 [[deps.ARFFFiles]]
 deps = ["CategoricalArrays", "Dates", "Parsers", "Tables"]
@@ -2136,6 +2148,9 @@ version = "1.4.1+0"
 """
 
 # ╔═╡ Cell order:
+# ╟─34f74a05-818c-4cdf-ac7c-a74b7a478329
+# ╠═09d06610-9b0e-428e-8b99-55f8bf0de376
+# ╟─9be44075-dc61-4957-a761-e54315f91d2b
 # ╠═a4ba2c57-8cf2-4bb7-800a-4839af64849c
 # ╠═1c41d476-dda7-45b8-bc25-ec757244f932
 # ╠═3b7dd1cd-f2f7-4229-b0c4-4cdf7aea495a
@@ -2174,6 +2189,5 @@ version = "1.4.1+0"
 # ╠═8a186f25-06e7-458c-9d43-7a1d495c7a4d
 # ╠═abca48a9-c9d0-4726-a3df-b0801371241a
 # ╠═8fc811e6-8644-4d66-bc50-a49b4da56d64
-# ╠═41f8144f-d87e-41f4-b209-237285379fa9
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
