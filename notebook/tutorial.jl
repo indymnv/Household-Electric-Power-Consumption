@@ -124,6 +124,11 @@ begin
            for i in 1:n for j in 1:m])
 end
 
+# ╔═╡ 41510658-acc7-4b32-8e79-883093440cf7
+md"""
+## A brief clustering with kmeans
+"""
+
 # ╔═╡ fc4bd69b-0fb4-46b4-b1a5-fb95bb4990d5
 begin
 	X = data[!, 3:9]
@@ -219,6 +224,15 @@ data.lag_30
 # ╔═╡ 2f295092-b0fe-441b-996b-3414be28fcc0
 replace!(data.lag_30, missing => 0);
 
+# ╔═╡ 739a1dc5-7a3e-4cef-8841-e91d729dbc1b
+# add a column to mark when is morning evening and night
+data[!,"interval_day"] = map(x -> (x < 9 ? 1 : (x >= 9 && x <= 17 ? 2 : 3)), 								data[!,:hour])
+# rolling functions with lag necessary mean median std
+#data[!, "rollmean_30"] = rollmean(data.Global_active_power, 30)
+#data[!, "rollstd_30"] = rollstd(data.Global_active_power, 30)
+
+
+
 # ╔═╡ d29bbac3-ee6d-47af-b8db-ab99f5b030b4
 begin
 	train = copy(filter(x -> x.Date < Date(2010,10,01), data))
@@ -227,8 +241,8 @@ end
 
 # ╔═╡ 60895046-09c1-4cc7-8528-35470e7eba09
 begin
-	select!(train, Not([:Date, :Time, :date_time, :cluster]))
-	select!(test, Not([:Date, :Time, :date_time, :cluster]))
+	select!(train, Not([:Date, :Time, :date_time, :cluster, ]))
+	select!(test, Not([:Date, :Time, :date_time, :cluster, ]))
 end
 
 # ╔═╡ 3b811c60-a918-43fd-bd14-1e0bad0aba1f
@@ -274,7 +288,9 @@ begin
 		:minute_cos=>Continuous,
 		:dayofweek_cos=>Continuous,
 		:lag_30=>Continuous,
-		:weeekend=>Multiclass);
+		:weeekend=>Multiclass,
+		:interval_day=>Multiclass,
+	);
 	
 	test_coerced = coerce(test_cyclical, 
 		:year_sin=>Continuous,
@@ -290,7 +306,9 @@ begin
 		:minute_cos=>Continuous,
 		:dayofweek_cos=>Continuous,
 		:lag_30=>Continuous,
-		:weeekend=>Multiclass);
+		:weeekend=>Multiclass,
+		:interval_day=>Multiclass,
+	);
 end
 
 # ╔═╡ 13935b3c-b7b1-496c-b62b-cec377b4512f
@@ -308,6 +326,7 @@ end
 
 # ╔═╡ 8b65a47d-8717-4ce0-85dc-353c9dcb16b2
 begin
+	# 0.7725232666581258
 	pred_etr = MLJ.predict(machreg, test_coerced[!,14:end]);
 	rms_score = rms(pred_etr, y_test)
 end
@@ -2149,7 +2168,7 @@ version = "1.4.1+0"
 
 # ╔═╡ Cell order:
 # ╟─34f74a05-818c-4cdf-ac7c-a74b7a478329
-# ╠═09d06610-9b0e-428e-8b99-55f8bf0de376
+# ╟─09d06610-9b0e-428e-8b99-55f8bf0de376
 # ╟─9be44075-dc61-4957-a761-e54315f91d2b
 # ╠═a4ba2c57-8cf2-4bb7-800a-4839af64849c
 # ╠═1c41d476-dda7-45b8-bc25-ec757244f932
@@ -2163,6 +2182,7 @@ version = "1.4.1+0"
 # ╠═0100421c-dea1-4ec4-a622-b96ac3a9775e
 # ╠═185e8de6-b136-45d3-9603-7cb62fe46a95
 # ╠═d90786bf-aab1-49bf-8b7b-82827c61da1b
+# ╠═41510658-acc7-4b32-8e79-883093440cf7
 # ╠═fc4bd69b-0fb4-46b4-b1a5-fb95bb4990d5
 # ╠═e7f713c8-d56b-4b00-9a65-ba1b6411999f
 # ╠═f5cff6d6-3652-496c-afdf-b6bb4a70d203
@@ -2176,6 +2196,7 @@ version = "1.4.1+0"
 # ╠═d5c80f35-b750-41c1-8a30-9cb89c59f5aa
 # ╠═e8259bf0-f702-4ef1-97cc-2419f3564ff1
 # ╠═2f295092-b0fe-441b-996b-3414be28fcc0
+# ╠═739a1dc5-7a3e-4cef-8841-e91d729dbc1b
 # ╠═d29bbac3-ee6d-47af-b8db-ab99f5b030b4
 # ╠═60895046-09c1-4cc7-8528-35470e7eba09
 # ╠═3b811c60-a918-43fd-bd14-1e0bad0aba1f
