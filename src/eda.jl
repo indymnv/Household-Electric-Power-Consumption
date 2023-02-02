@@ -1,4 +1,4 @@
-using Plots
+using Plots, unicodeplots()
 using DataFrames
 using StatsKit
 using CSV
