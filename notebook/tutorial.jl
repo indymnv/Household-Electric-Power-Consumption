@@ -208,30 +208,42 @@ begin
 	plot(h1, h2, h3, h4 ,layout=(2,2), legend=false)
 end
 
-# ╔═╡ 8b724949-3388-4757-b8d3-55b66a296aac
-begin
-	plot(data.Global_active_power)
-	plot!(rollmean(data.Global_active_power, 25))
-	
-end
-
 # ╔═╡ d5c80f35-b750-41c1-8a30-9cb89c59f5aa
 data[!, :lag_30] = Array(ShiftedArray(data.Global_active_power, 30))
-
-# ╔═╡ e8259bf0-f702-4ef1-97cc-2419f3564ff1
-data.lag_30
 
 # ╔═╡ 2f295092-b0fe-441b-996b-3414be28fcc0
 replace!(data.lag_30, missing => 0);
 
+# ╔═╡ 2ac2439e-b679-405d-9103-1a9b38c36200
+length(data.lag_30)
+
+# ╔═╡ 9375e4a3-3ba0-4e4b-a47f-23edb9676ded
+rollstd(data.lag_30, 30)
+
+# ╔═╡ b734f136-c680-4ee0-8896-79d2241b3099
+data
+
+# ╔═╡ d9ff8fd1-f621-4a8b-a7ac-037ceee4d9ad
+# ╠═╡ disabled = true
+#=╠═╡
+#begin
+#	data[!,:rollstd30] = 0
+	insert(data[!,:rollstd30], length(data.lag_30) - length(rollstd(data.lag_30, 		30)), rollstd(data.lag_30, 30))
+end
+  ╠═╡ =#
+
 # ╔═╡ 739a1dc5-7a3e-4cef-8841-e91d729dbc1b
-# add a column to mark when is morning evening and night
-data[!,"interval_day"] = map(x -> (x < 9 ? 1 : (x >= 9 && x <= 17 ? 2 : 3)), 								data[!,:hour])
-# rolling functions with lag necessary mean median std
-#data[!, "rollmean_30"] = rollmean(data.Global_active_power, 30)
-#data[!, "rollstd_30"] = rollstd(data.Global_active_power, 30)
+# ╠═╡ disabled = true
+#=╠═╡
+begin
+	# rolling functions with lag necessary mean median std
+	#data[!, "rollmean_30"] = rollmean(data.Global_active_power, 30)
+	data[!, :rollmean_30] = Array(ShiftedArray(data.Voltage, 30))
+	replace!(data.rollmean_30, missing => 0);
+	#data[!, "rollstd_30"] = rollstd(data.Global_active_power, 30)
+end
 
-
+  ╠═╡ =#
 
 # ╔═╡ d29bbac3-ee6d-47af-b8db-ab99f5b030b4
 begin
@@ -245,10 +257,13 @@ begin
 	select!(test, Not([:Date, :Time, :date_time, :cluster, ]))
 end
 
+# ╔═╡ 0483f035-c3fa-4de4-be98-a73f430f89d3
+train
+
 # ╔═╡ 3b811c60-a918-43fd-bd14-1e0bad0aba1f
 begin
-	y_train = copy(train[!,:Global_active_power])
-	y_test = copy(test[!,:Global_active_power])
+	y_train = copy(train[!,:Voltage])
+	y_test = copy(test[!,:Voltage])
 end
 
 # ╔═╡ 2de3e03c-c4e6-46d8-8b89-e929e35cd4b3
@@ -317,7 +332,7 @@ train_coerced
 # ╔═╡ 95667564-9d8a-45ca-a5c8-b5baad187f4b
 begin
 	EvoTreeRegressor = @load EvoTreeRegressor pkg=EvoTrees verbosity=0
-	etr = EvoTreeRegressor(max_depth =12)
+	etr = EvoTreeRegressor(max_depth =15)
 	
 	machreg = machine(etr, train_coerced[!,14:end], y_train);
 
@@ -2192,13 +2207,16 @@ version = "1.4.1+0"
 # ╠═6a3e5035-445a-4f5d-9b0d-cedd251f2b6a
 # ╠═4e5e989f-9cfa-4b04-87a4-9490a66d0c0d
 # ╠═3b1f7548-4e85-40b2-b6d9-1dfcba6e49ab
-# ╠═8b724949-3388-4757-b8d3-55b66a296aac
 # ╠═d5c80f35-b750-41c1-8a30-9cb89c59f5aa
-# ╠═e8259bf0-f702-4ef1-97cc-2419f3564ff1
 # ╠═2f295092-b0fe-441b-996b-3414be28fcc0
+# ╠═2ac2439e-b679-405d-9103-1a9b38c36200
+# ╠═9375e4a3-3ba0-4e4b-a47f-23edb9676ded
+# ╠═b734f136-c680-4ee0-8896-79d2241b3099
+# ╠═d9ff8fd1-f621-4a8b-a7ac-037ceee4d9ad
 # ╠═739a1dc5-7a3e-4cef-8841-e91d729dbc1b
 # ╠═d29bbac3-ee6d-47af-b8db-ab99f5b030b4
 # ╠═60895046-09c1-4cc7-8528-35470e7eba09
+# ╠═0483f035-c3fa-4de4-be98-a73f430f89d3
 # ╠═3b811c60-a918-43fd-bd14-1e0bad0aba1f
 # ╠═2de3e03c-c4e6-46d8-8b89-e929e35cd4b3
 # ╠═6610f46e-5475-4865-b690-cdde061b467e
