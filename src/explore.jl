@@ -220,13 +220,13 @@ rms_score = rms(pred_etr, y_test)
 error = y_test - pred_etr
 
 # Estimate distribution parameters:
-mean_err = mean(error)
-std_err = std(error)
+mean_err = mean(pred_etr)
+std_err = std(pred_etr)
 # Create QQ plot:
-qqplot(Normal(mean_err, std_err), error, title = "QQ-plot error distribution")
+qqplot(Normal(mean_err, std_err), pred_etr, title = "QQ-plot error distribution")
 
 #get plot for error
-er1 = histogram( y_test - pred_etr, title = "error rms $rms_score", bins= 20)
+er1 = histogram( y_test - pred_etr, title = "error rms $rms_score", bins= 30)
 
 er2 = scatter( y_test , pred_etr, )
 plot(er1, er2, layout=(1,2), legend=false)
