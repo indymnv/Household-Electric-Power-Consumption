@@ -19,6 +19,8 @@ using ShiftedArrays
 using DataFrames
 using Distributions
 using HypothesisTests
+using ConformalPrediction
+
 
 #read data
 data_url = "https://archive.ics.uci.edu/ml/machine-learning-databases/00235/household_power_consumption.zip"
@@ -204,15 +206,34 @@ test_coerced = coerce(test_cyclical,
         :interval_day=>Multiclass,
 );
 
-train_coerced
-
 EvoTreeRegressor = @load EvoTreeRegressor pkg=EvoTrees verbosity=1
-etr = EvoTreeRegressor(max_depth =15)
+etr = EvoTreeRegressor(max_depth =15,)
 
-machreg = machine(etr, train_coerced[!,14:end], y_train);
+#########################################################
+round_range = range(etr, :nrounds, lower = 10, upper = 20)
+lambda_range = range(etr, :lambda, lower = 0, upper = 0.1)
+
+lmTuneModel = TunedModel(model=etr,
+                          resampling = TimeSeriesCV(nfolds=3),
+                          tuning = RandomSearch(),
+                          range = [round_range, lambda_range],
+                          measures=[rmse]);
+
+
+#########################################################
+
+machreg = machine(lmTuneModel, train_coerced[!,14:end], y_train);
 
 fit!(machreg);
+
+plot(machreg)
+
+report(machreg).best_model
+
 #predict and get error
+pred_etr = MLJ.predict(machreg, train_coerced[!,14:end]);
+rms_score = rms(pred_etr, y_train)
+
 pred_etr = MLJ.predict(machreg, test_coerced[!,14:end]);
 rms_score = rms(pred_etr, y_test)
 
@@ -229,6 +250,7 @@ qqplot(Normal(mean_err, std_err), pred_etr, title = "QQ-plot error distribution"
 er1 = histogram( y_test - pred_etr, title = "error rms $rms_score", bins= 30)
 
 er2 = scatter( y_test , pred_etr, )
+
 plot(er1, er2, layout=(1,2), legend=false)
 
 #also contribute with line plots
