@@ -226,9 +226,14 @@ machreg = machine(lmTuneModel, train_coerced[!,14:end], y_train);
 
 fit!(machreg);
 
+#Review the model performance
 plot(machreg)
 
 report(machreg).best_model
+
+machreg = machine(fitted_params(machreg).best_model, train_coerced[!,14:end], y_train);
+
+fit!(machreg);
 
 #predict and get error
 pred_etr = MLJ.predict(machreg, train_coerced[!,14:end]);
@@ -256,3 +261,23 @@ plot(er1, er2, layout=(1,2), legend=false)
 #also contribute with line plots
 plot(y_test, label = "real")
 plot!(pred_etr, label= "predict")
+
+#Conformal prediction
+model = EvoTreeRegressor(nrounds=25, max_depth = 15, lambda = 0.034) 
+conf_model = conformal_model(model)
+mach = machine(conf_model, train_coerced[!,14:end], y_train)
+fit!(mach)
+
+y_pred = ConformalPrediction.predict(mach, test_coerced[!,14:end]);
+
+plot(mach.model, mach.fitresult, test_coerced[!,14:end], y_test, observed_lab="Test points")
+
+y_pred_inf = [x for (x, y) in y_pred]
+y_pred_up = [y for (x, y) in y_pred]
+
+#also contribute with line plots
+plot(y_test, label = "real")
+plot!(pred_etr, label= "predict", )
+plot!(y_pred_inf, color= "green")
+plot!(y_pred_up, color = "green")
+
