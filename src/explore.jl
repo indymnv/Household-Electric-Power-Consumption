@@ -75,10 +75,7 @@ annotate!([(j, i, text(round(cm[i,j],digits=3),
                8,"Computer Modern",:black))
    for i in 1:n for j in 1:m])
 
-# ╔═╡ 41510658-acc7-4b32-8e79-883093440cf7
-md"""
-## A brief clustering with kmeans
-"""
+# Cluster k-means
 
 X = data[!, 3:9]
 transformer_instance = Standardizer()
@@ -277,7 +274,8 @@ y_pred_up = [y for (x, y) in y_pred]
 
 #also contribute with line plots
 plot(y_test, label = "real")
-plot!(pred_etr, label= "predict", )
+plot!(pred_etr, label= "predict", ribbons = (pred_etr - y_pred_inf, y_pred_up-pred_etr) )
+
 plot!(y_pred_inf, color= "green")
 plot!(y_pred_up, color = "green")
 
