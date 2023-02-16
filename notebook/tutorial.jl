@@ -66,6 +66,32 @@ One thing that we can observe is that we have a presence of the symbol "?" In nu
 # ╔═╡ 62e02377-da4c-4381-9e59-4f32372f4fb5
 dropmissing!(data)
 
+# ╔═╡ b20e5a78-3c5c-4ae8-b49c-38d3eaf1bba1
+md"""
+We have the date and time of the record in these variables, so it is easy to extract various features, such as day, time, etc. 
+"""
+
+# ╔═╡ 2364d69b-f093-4fa0-a366-96c4091660bf
+begin
+	#Create a variable 
+	date_time = [DateTime(d, t) for (d,t) in zip(data[!,1], data[!,2])]
+	
+	data[!,:date_time] = date_time
+	
+	#Create variable for date
+	data[!,:year] = Dates.value.(Year.(data[!,1]))
+	data[!,:month] = Dates.value.(Month.(data[!,1]))
+	data[!,:day] = Dates.value.(Day.(data[!,1]))
+	
+	#Create variable for time
+	data[!, :hour] = Dates.value.(Hour.(data[!,2]))
+	data[!, :minute] = Dates.value.(Minute.(data[!,2]))
+	
+	#Create variable for weekends
+	data[!, :dayofweek] = [dayofweek(date) for date in data.Date]
+	data[!, :weekend] = [day in [6, 7] for day in data.dayofweek]
+end
+
 # ╔═╡ a4526d2f-5895-4468-aa43-1192b2dd50b5
 begin
 	for i in 3:8
@@ -122,31 +148,11 @@ md"""
 ###### In this section, we are interested in building a clustering model on the time series. The purpose? It is simply a way of evaluating behavior patterns over time, one hypothesis would be to see irregular behavior patterns over time, given that greater consumption would be seen at specific periods of the day or season.
 """
 
-# ╔═╡ b20e5a78-3c5c-4ae8-b49c-38d3eaf1bba1
+# ╔═╡ 297b0496-64bb-4290-9946-2d9f90fffb49
 md"""
-We have the date and time of the record in these variables, so it is easy to extract various features, such as day, time, etc.
+An interesting issue that I was unaware of was that time series clustering is possible and you can use k-means, however in these cases, they cannot be treated from the same perspective, and other types of variants of these algorithms should be used to consider the temporality of neighboring observations when clustering. 
+But since this project is just a toy, and the use of this technique is only for EDA, we will stick with the classical algorithm.
 """
-
-# ╔═╡ 2364d69b-f093-4fa0-a366-96c4091660bf
-begin
-	#Create a variable 
-	date_time = [DateTime(d, t) for (d,t) in zip(data[!,1], data[!,2])]
-	
-	data[!,:date_time] = date_time
-	
-	#Create variable for date
-	data[!,:year] = Dates.value.(Year.(data[!,1]))
-	data[!,:month] = Dates.value.(Month.(data[!,1]))
-	data[!,:day] = Dates.value.(Day.(data[!,1]))
-	
-	#Create variable for time
-	data[!, :hour] = Dates.value.(Hour.(data[!,2]))
-	data[!, :minute] = Dates.value.(Minute.(data[!,2]))
-	
-	#Create variable for weekends
-	data[!, :dayofweek] = [dayofweek(date) for date in data.Date]
-	data[!, :weekend] = [day in [6, 7] for day in data.dayofweek]
-end
 
 # ╔═╡ fc4bd69b-0fb4-46b4-b1a5-fb95bb4990d5
 begin
@@ -157,10 +163,10 @@ begin
 	X = MLJ.transform(transformer_model, X);
 end
 
-# ╔═╡ e7f713c8-d56b-4b00-9a65-ba1b6411999f
-for m in models()
-    println("Model name = ",m.name,", ","Prediction type = ",m.prediction_type,", ","Package name = ",m.package_name);
-end
+# ╔═╡ 654e2e58-92e6-4ec9-a1c6-b53e3a954a53
+md"""
+Let's get our clusters and assigning to a column
+"""
 
 # ╔═╡ f5cff6d6-3652-496c-afdf-b6bb4a70d203
 begin
@@ -169,24 +175,34 @@ begin
 	#train = collect(Matrix(X)')
 	mach = machine(kmeans, X) |> fit!
 	
-	# cluster X into 5 clusters using K-means
-	#R = machine(train , 5; maxiter=200, display=:iter)
+	# cluster X into 3 clusters using K-means
 	Xsmall = MLJ.transform(mach);
 	selectrows(Xsmall, 1:4) |> pretty
 	yhat = MLJ.predict(mach)
 	data[!,:cluster] = yhat
-	#@assert nclusters(R) == 5 # verify the number of clusters
-	
-	#a = assignments(R) # get the assignments of points to clusters
-	#c = counts(R) # get the cluster sizes
-	#M = R.centers # get the cluster centers
+
 end
+
+# ╔═╡ 9e399a30-f44c-4e1f-b93c-34acccb5de75
+md"""
+Let's count each cluster
+"""
 
 # ╔═╡ 9cadf7ab-428b-4c92-8aed-2995bc13b629
 combine(groupby(data, :cluster), nrow )
 
+# ╔═╡ b9860292-3c77-418a-9058-02c8f2ec9fed
+md"""
+And now, let's try to see how this is going with a plot considering across the time a small sample
+"""
+
 # ╔═╡ e3239243-ccd3-403a-be05-24ee8c43b766
 scatter(data[1:20000,:].date_time,data[1:20000,:].Voltage,  group=data[1:20000,:].cluster,)
+
+# ╔═╡ 57509d8a-2664-41e1-a828-1a9320891a26
+md"""
+We can see an interesting trend, let's see similar view but for the rest of variables.
+"""
 
 # ╔═╡ e34c100f-5107-4933-abed-ae25ad16d662
 plot([scatter(data[1:20000, :date_time],data[1:20000,col]; group=data[1:20000,:].cluster, size=(1200, 1000), title = col, xrot=30) for col in ["Global_active_power",  "Global_reactive_power", "Global_intensity", "Voltage", "Sub_metering_1",  "Sub_metering_2", "Sub_metering_3"]]...)
@@ -215,6 +231,11 @@ begin
 	plot(b1, b2, b3, b4 ,layout=(2,2), legend=false)
 end
 
+# ╔═╡ 83709df9-986c-4229-9a3c-ed666ac8c98e
+md"""
+We can notice that clustering made the divisions, and there are some interesting trends such as the case of voltage, which is the clearest to observe. Now using the frequency tables library, we are going to create heat maps, and compare them with their relative trend, this will allow us to observe how in each clustering, their trends are distributed over time.
+"""
+
 # ╔═╡ 3b1f7548-4e85-40b2-b6d9-1dfcba6e49ab
 begin
 	h1 =heatmap(freqtable(data,:cluster,:dayofweek)./freqtable(data,:cluster), title = "day of week")
@@ -226,6 +247,11 @@ begin
 	#@df data boxplot(string.(:cluster), :Global_active_power, fillalpha=0.75, linewidth=2)
 	plot(h1, h2, h3, h4 ,layout=(2,2), legend=false)
 end
+
+# ╔═╡ 3cef18e2-ae64-49f6-bc9d-219b7f828f05
+md"""
+It might be a bit confusing initially, but let me take an example that might help you understand. If you take into account cluster 2, it corresponds to the lowest use of the global intensity used. If we go to the heatmap that represents the hours, we will see that the time where this pattern of behavior is most present is at night, which corresponds to the hours we are usually sleeping. Do you think it makes sense? At least for me yes.
+"""
 
 # ╔═╡ d5c80f35-b750-41c1-8a30-9cb89c59f5aa
 data[!, :lag_30] = Array(ShiftedArray(data.Global_active_power, 30))
@@ -406,7 +432,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.3"
 manifest_format = "2.0"
-project_hash = "91d70e9a3c1f219f0a65f228d47d3bdcfd0636fb"
+project_hash = "c6442a7ca7d19de84e78c4fbc812dc1ab5f9ec5d"
 
 [[deps.ARFFFiles]]
 deps = ["CategoricalArrays", "Dates", "Parsers", "Tables"]
@@ -2152,33 +2178,39 @@ version = "1.4.1+0"
 
 # ╔═╡ Cell order:
 # ╟─34f74a05-818c-4cdf-ac7c-a74b7a478329
-# ╠═09d06610-9b0e-428e-8b99-55f8bf0de376
+# ╟─09d06610-9b0e-428e-8b99-55f8bf0de376
 # ╟─9be44075-dc61-4957-a761-e54315f91d2b
 # ╠═a4ba2c57-8cf2-4bb7-800a-4839af64849c
-# ╠═828be6cc-9951-432e-895d-574a6564e957
+# ╟─828be6cc-9951-432e-895d-574a6564e957
 # ╠═1c41d476-dda7-45b8-bc25-ec757244f932
 # ╠═652f39e8-227c-4f6c-a9f0-7b576e8f89e8
-# ╠═da5bc886-6107-4dbd-b233-99ac022e7f34
+# ╟─da5bc886-6107-4dbd-b233-99ac022e7f34
 # ╠═62e02377-da4c-4381-9e59-4f32372f4fb5
+# ╠═b20e5a78-3c5c-4ae8-b49c-38d3eaf1bba1
+# ╠═2364d69b-f093-4fa0-a366-96c4091660bf
 # ╠═a4526d2f-5895-4468-aa43-1192b2dd50b5
 # ╠═58c9735b-2c25-4856-847c-6a418f96b291
 # ╠═185e8de6-b136-45d3-9603-7cb62fe46a95
 # ╠═4b9c8ce7-2cc5-4990-9d3b-884178d66825
 # ╠═d90786bf-aab1-49bf-8b7b-82827c61da1b
 # ╠═fa14547b-2803-4806-b439-631e8d382cf1
-# ╠═41510658-acc7-4b32-8e79-883093440cf7
-# ╠═63fda925-ca7d-4b4a-9fd9-73acd0952634
-# ╠═b20e5a78-3c5c-4ae8-b49c-38d3eaf1bba1
-# ╠═2364d69b-f093-4fa0-a366-96c4091660bf
+# ╟─41510658-acc7-4b32-8e79-883093440cf7
+# ╟─63fda925-ca7d-4b4a-9fd9-73acd0952634
+# ╠═297b0496-64bb-4290-9946-2d9f90fffb49
 # ╠═fc4bd69b-0fb4-46b4-b1a5-fb95bb4990d5
-# ╠═e7f713c8-d56b-4b00-9a65-ba1b6411999f
+# ╠═654e2e58-92e6-4ec9-a1c6-b53e3a954a53
 # ╠═f5cff6d6-3652-496c-afdf-b6bb4a70d203
+# ╠═9e399a30-f44c-4e1f-b93c-34acccb5de75
 # ╠═9cadf7ab-428b-4c92-8aed-2995bc13b629
+# ╠═b9860292-3c77-418a-9058-02c8f2ec9fed
 # ╠═e3239243-ccd3-403a-be05-24ee8c43b766
+# ╠═57509d8a-2664-41e1-a828-1a9320891a26
 # ╠═e34c100f-5107-4933-abed-ae25ad16d662
 # ╠═6a3e5035-445a-4f5d-9b0d-cedd251f2b6a
 # ╠═4e5e989f-9cfa-4b04-87a4-9490a66d0c0d
+# ╠═83709df9-986c-4229-9a3c-ed666ac8c98e
 # ╠═3b1f7548-4e85-40b2-b6d9-1dfcba6e49ab
+# ╠═3cef18e2-ae64-49f6-bc9d-219b7f828f05
 # ╠═d5c80f35-b750-41c1-8a30-9cb89c59f5aa
 # ╠═2f295092-b0fe-441b-996b-3414be28fcc0
 # ╠═2ac2439e-b679-405d-9103-1a9b38c36200
