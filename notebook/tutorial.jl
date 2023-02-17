@@ -253,20 +253,16 @@ md"""
 It might be a bit confusing initially, but let me take an example that might help you understand. If you take into account cluster 2, it corresponds to the lowest use of the global intensity used. If we go to the heatmap that represents the hours, we will see that the time where this pattern of behavior is most present is at night, which corresponds to the hours we are usually sleeping. Do you think it makes sense? At least for me yes.
 """
 
+# ╔═╡ 8d47bee3-6140-41af-9e8f-7ace82413f45
+md"""
+This might give us a slight hint that time frames might be necessary, we'll take this information for character engineering at this point later. Now let's start with the next phase.
+"""
+
 # ╔═╡ d5c80f35-b750-41c1-8a30-9cb89c59f5aa
-data[!, :lag_30] = Array(ShiftedArray(data.Global_active_power, 30))
-
-# ╔═╡ 2f295092-b0fe-441b-996b-3414be28fcc0
-replace!(data.lag_30, missing => 0);
-
-# ╔═╡ 2ac2439e-b679-405d-9103-1a9b38c36200
-length(data.lag_30)
-
-# ╔═╡ 9375e4a3-3ba0-4e4b-a47f-23edb9676ded
-rollstd(data.lag_30, 30)
-
-# ╔═╡ b734f136-c680-4ee0-8896-79d2241b3099
-data
+begin
+	data[!, :lag_30] = Array(ShiftedArray(data.Global_active_power, 30))
+	replace!(data.lag_30, missing => 0);
+end
 
 # ╔═╡ d29bbac3-ee6d-47af-b8db-ab99f5b030b4
 begin
@@ -280,9 +276,6 @@ begin
 	select!(test, Not([:Date, :Time, :date_time, :cluster, ]))
 end
 
-# ╔═╡ 0483f035-c3fa-4de4-be98-a73f430f89d3
-train
-
 # ╔═╡ 3b811c60-a918-43fd-bd14-1e0bad0aba1f
 begin
 	y_train = copy(train[!,:Voltage])
@@ -292,7 +285,7 @@ end
 # ╔═╡ 2de3e03c-c4e6-46d8-8b89-e929e35cd4b3
 function cyclical_encoder(df::DataFrame, columns::Union{Array, Symbol}, max_val::Union{Array, Int} )
     for (column, max) in zip(columns, max_val)
-		#max_val = maximum(df[:, column])
+
         df[:, Symbol(string(column) * "_sin")] = sin.(2*pi*df[:, column]/max)
         df[:, Symbol(string(column) * "_cos")] = cos.(2*pi*df[:, column]/max)
     end
@@ -308,7 +301,7 @@ begin
 end
 
 # ╔═╡ 43172899-ccd9-48d6-b3fd-ed9a3add8833
-names(train_cyclical)
+schema(train_cyclical[!, 9:end])
 
 # ╔═╡ 6e1a56b7-69cd-46e3-9716-22f0bda1f2f7
 begin
@@ -348,9 +341,6 @@ begin
 		:interval_day=>Multiclass,
 	);
 end
-
-# ╔═╡ 13935b3c-b7b1-496c-b62b-cec377b4512f
-train_coerced
 
 # ╔═╡ 95667564-9d8a-45ca-a5c8-b5baad187f4b
 begin
@@ -2211,20 +2201,15 @@ version = "1.4.1+0"
 # ╠═83709df9-986c-4229-9a3c-ed666ac8c98e
 # ╠═3b1f7548-4e85-40b2-b6d9-1dfcba6e49ab
 # ╠═3cef18e2-ae64-49f6-bc9d-219b7f828f05
+# ╠═8d47bee3-6140-41af-9e8f-7ace82413f45
 # ╠═d5c80f35-b750-41c1-8a30-9cb89c59f5aa
-# ╠═2f295092-b0fe-441b-996b-3414be28fcc0
-# ╠═2ac2439e-b679-405d-9103-1a9b38c36200
-# ╠═9375e4a3-3ba0-4e4b-a47f-23edb9676ded
-# ╠═b734f136-c680-4ee0-8896-79d2241b3099
 # ╠═d29bbac3-ee6d-47af-b8db-ab99f5b030b4
 # ╠═60895046-09c1-4cc7-8528-35470e7eba09
-# ╠═0483f035-c3fa-4de4-be98-a73f430f89d3
 # ╠═3b811c60-a918-43fd-bd14-1e0bad0aba1f
 # ╠═2de3e03c-c4e6-46d8-8b89-e929e35cd4b3
 # ╠═6610f46e-5475-4865-b690-cdde061b467e
 # ╠═43172899-ccd9-48d6-b3fd-ed9a3add8833
 # ╠═6e1a56b7-69cd-46e3-9716-22f0bda1f2f7
-# ╠═13935b3c-b7b1-496c-b62b-cec377b4512f
 # ╠═95667564-9d8a-45ca-a5c8-b5baad187f4b
 # ╠═8b65a47d-8717-4ce0-85dc-353c9dcb16b2
 # ╠═abca48a9-c9d0-4726-a3df-b0801371241a
