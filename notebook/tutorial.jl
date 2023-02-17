@@ -378,6 +378,28 @@ begin
 	plot!(pred_etr, label= "predict")
 end
 
+# ╔═╡ 8fa20180-6720-48bf-b1b8-7404f831edd8
+
+etr2 = EvoTreeRegressor(max_depth =15,)
+
+# ╔═╡ 2a3e6aa0-bef8-49e8-9ab2-0ecebfd0a39d
+begin 
+	round_range = range(etr, :nrounds, lower = 10, upper = 20)
+	lambda_range = range(etr, :lambda, lower = 0, upper = 0.1)
+	
+	lmTuneModel = TunedModel(model=etr,
+	                          resampling = TimeSeriesCV(nfolds=3),
+	                          tuning = RandomSearch(),
+	                          range = [round_range, lambda_range],
+	                          measures=[rmse]);
+	machregTuned = machine(lmTuneModel, train_cyclical[!,14:end], y_train);
+
+	fit!(machregTuned);
+end
+
+# ╔═╡ 88460105-3bc2-4277-95ad-b6aee126d0fe
+
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -2217,5 +2239,8 @@ version = "1.4.1+0"
 # ╠═8b65a47d-8717-4ce0-85dc-353c9dcb16b2
 # ╠═abca48a9-c9d0-4726-a3df-b0801371241a
 # ╠═8fc811e6-8644-4d66-bc50-a49b4da56d64
+# ╠═8fa20180-6720-48bf-b1b8-7404f831edd8
+# ╠═2a3e6aa0-bef8-49e8-9ab2-0ecebfd0a39d
+# ╠═88460105-3bc2-4277-95ad-b6aee126d0fe
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
