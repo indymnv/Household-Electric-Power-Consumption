@@ -304,6 +304,8 @@ end
 schema(train_cyclical[!, 9:end])
 
 # ╔═╡ 6e1a56b7-69cd-46e3-9716-22f0bda1f2f7
+# ╠═╡ disabled = true
+#=╠═╡
 begin
 	train_coerced = coerce(train_cyclical, 
 		:year_sin=>Continuous,
@@ -341,13 +343,14 @@ begin
 		:interval_day=>Multiclass,
 	);
 end
+  ╠═╡ =#
 
 # ╔═╡ 95667564-9d8a-45ca-a5c8-b5baad187f4b
 begin
 	EvoTreeRegressor = @load EvoTreeRegressor pkg=EvoTrees verbosity=0
 	etr = EvoTreeRegressor(max_depth =15)
 	
-	machreg = machine(etr, train_coerced[!,14:end], y_train);
+	machreg = machine(etr, train_cyclical[!,14:end], y_train);
 
 	fit!(machreg);
 end
@@ -355,7 +358,7 @@ end
 # ╔═╡ 8b65a47d-8717-4ce0-85dc-353c9dcb16b2
 begin
 	# 0.7725232666581258
-	pred_etr = MLJ.predict(machreg, test_coerced[!,14:end]);
+	pred_etr = MLJ.predict(machreg, test_cyclical[!,14:end]);
 	rms_score = rms(pred_etr, y_test)
 end
 
