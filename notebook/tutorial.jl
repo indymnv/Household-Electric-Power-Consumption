@@ -384,13 +384,14 @@ etr2 = EvoTreeRegressor(max_depth =15,)
 
 # ╔═╡ 2a3e6aa0-bef8-49e8-9ab2-0ecebfd0a39d
 begin 
-	round_range = range(etr, :nrounds, lower = 10, upper = 20)
+	max_depth_range = range(etr, :max_depth, lower = 10, upper = 20)
+	round_range = range(etr, :nrounds, lower = 10, upper = 50)
 	lambda_range = range(etr, :lambda, lower = 0, upper = 0.1)
 	
 	lmTuneModel = TunedModel(model=etr,
 	                          resampling = TimeSeriesCV(nfolds=3),
 	                          tuning = RandomSearch(),
-	                          range = [round_range, lambda_range],
+	                          range = [round_range, lambda_range, max_depth_range],
 	                          measures=[rmse]);
 	machregTuned = machine(lmTuneModel, train_cyclical[!,14:end], y_train);
 
@@ -398,7 +399,37 @@ begin
 end
 
 # ╔═╡ 88460105-3bc2-4277-95ad-b6aee126d0fe
+plot(machregTuned)
 
+# ╔═╡ 4220c02f-e83a-4e8a-8976-cf972554e42e
+report(machregTuned).best_model
+
+
+# ╔═╡ beff6da0-c5ab-4807-a937-46f13d599f0a
+begin
+	machregFinal = machine(fitted_params(machregTuned).best_model, 									train_cyclical[!,14:end], y_train);
+
+	fit!(machregFinal);
+	
+	#predict and get error
+	predYtrain = MLJ.predict(machregFinal, train_cyclical[!,14:end]);
+	rmsYtrain = rms(predYtrain, y_train)
+	println("The rms in train is $rmsYtrain")
+	
+	predYtest = MLJ.predict(machregFinal, test_cyclical[!,14:end]);
+	rmsYtest = rms(predYtest, y_test)
+	println("The rms in test is $rmsYtest")
+end
+
+# ╔═╡ af89b255-6044-475e-a442-87ac8f304730
+begin
+	#get plot for error
+	histFinal = histogram( y_test - predYtest, title = "error rms $rmsYtest", bins= 30)
+
+	scatFinal = scatter( y_test , predYtest, )
+
+	plot(histFinal, scatFinal, layout=(1,2), legend=false)
+end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -2242,5 +2273,8 @@ version = "1.4.1+0"
 # ╠═8fa20180-6720-48bf-b1b8-7404f831edd8
 # ╠═2a3e6aa0-bef8-49e8-9ab2-0ecebfd0a39d
 # ╠═88460105-3bc2-4277-95ad-b6aee126d0fe
+# ╠═4220c02f-e83a-4e8a-8976-cf972554e42e
+# ╠═beff6da0-c5ab-4807-a937-46f13d599f0a
+# ╠═af89b255-6044-475e-a442-87ac8f304730
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
