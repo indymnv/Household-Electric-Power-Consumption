@@ -348,9 +348,9 @@ end
 # ╔═╡ 95667564-9d8a-45ca-a5c8-b5baad187f4b
 begin
 	EvoTreeRegressor = @load EvoTreeRegressor pkg=EvoTrees verbosity=0
-	etr = EvoTreeRegressor(max_depth =15)
+	etr_start = EvoTreeRegressor(max_depth =15)
 	
-	machreg = machine(etr, train_cyclical[!,14:end], y_train);
+	machreg = machine(etr_start, train_cyclical[!,14:end], y_train);
 
 	fit!(machreg);
 end
@@ -380,18 +380,18 @@ end
 
 # ╔═╡ 8fa20180-6720-48bf-b1b8-7404f831edd8
 
-etr2 = EvoTreeRegressor(max_depth =15,)
+etr = EvoTreeRegressor(max_depth =17,)
 
 # ╔═╡ 2a3e6aa0-bef8-49e8-9ab2-0ecebfd0a39d
 begin 
-	max_depth_range = range(etr, :max_depth, lower = 10, upper = 20)
+	#max_depth_range = range(etr, :max_depth, lower = 10, upper = 20)
 	round_range = range(etr, :nrounds, lower = 10, upper = 50)
 	lambda_range = range(etr, :lambda, lower = 0, upper = 0.1)
 	
 	lmTuneModel = TunedModel(model=etr,
 	                          resampling = TimeSeriesCV(nfolds=3),
 	                          tuning = RandomSearch(),
-	                          range = [round_range, lambda_range, max_depth_range],
+	                          range = [round_range, lambda_range,],
 	                          measures=[rmse]);
 	machregTuned = machine(lmTuneModel, train_cyclical[!,14:end], y_train);
 
