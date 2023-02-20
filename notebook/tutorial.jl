@@ -431,6 +431,45 @@ begin
 	plot(histFinal, scatFinal, layout=(1,2), legend=false)
 end
 
+# ╔═╡ 969a68db-283e-4d97-adaa-b3a896db6f12
+begin
+	plot(y_test, label = "real")
+	plot!(predYtest, label= "predict",)
+end
+
+# ╔═╡ 2b09dbe9-01aa-4326-a417-580a9c387296
+begin
+	#Conformal prediction
+	model3 = EvoTreeRegressor(nrounds=100, max_depth = 17, lambda = 0.034) 
+	#conf_model = conformal_model(model)
+	mach3 = machine(model3, train_cyclical[!,14:end], y_train)
+	fit!(mach3)
+end
+
+# ╔═╡ de38510c-4fd4-4a51-beb7-78a1ecfc6ba9
+begin
+	# 0.7725232666581258
+	#pred_etr3 = MLJ.predict(mach3, test_cyclical[!,14:end]);
+	#rms_score3 = rms(pred_etr3, y_test)
+
+	predYtrain3 = MLJ.predict(mach3, train_cyclical[!,14:end]);
+	rmsYtrain3 = rms(predYtrain3, y_train)
+	println("The rms in train is $rmsYtrain3")
+	
+	predYtest3 = MLJ.predict(mach3, test_cyclical[!,14:end]);
+	rmsYtest3 = rms(predYtest3, y_test)
+	println("The rms in test is $rmsYtest3")
+end
+
+# ╔═╡ fc91c85e-d432-4fa1-ac1c-378ef2bcdfd1
+begin
+	plot(y_test, label = "real")
+	plot!(predYtest3, label= "predict",)
+end
+
+# ╔═╡ 50d52b30-3fd1-47c2-9297-8ac365b31410
+feature = importance(mach3)
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -2276,5 +2315,10 @@ version = "1.4.1+0"
 # ╠═4220c02f-e83a-4e8a-8976-cf972554e42e
 # ╠═beff6da0-c5ab-4807-a937-46f13d599f0a
 # ╠═af89b255-6044-475e-a442-87ac8f304730
+# ╠═969a68db-283e-4d97-adaa-b3a896db6f12
+# ╠═2b09dbe9-01aa-4326-a417-580a9c387296
+# ╠═de38510c-4fd4-4a51-beb7-78a1ecfc6ba9
+# ╠═fc91c85e-d432-4fa1-ac1c-378ef2bcdfd1
+# ╠═50d52b30-3fd1-47c2-9297-8ac365b31410
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
