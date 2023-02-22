@@ -267,11 +267,21 @@ begin
 	replace!(data.lag_30, missing => 0);
 end
 
+# ╔═╡ 82efcd26-1d2a-4d12-b121-cada9ba1a859
+md"""
+Let's split our data in train and test, considering a specific date
+"""
+
 # ╔═╡ d29bbac3-ee6d-47af-b8db-ab99f5b030b4
 begin
 	train = copy(filter(x -> x.Date < Date(2010,10,01), data))
 	test = copy(filter(x -> x.Date >= Date(2010,10,01), data))
 end
+
+# ╔═╡ dfb0e7b3-feba-4541-bfe8-a5eb08713be6
+md"""
+We can drop some columns after getting all the infromation available
+"""
 
 # ╔═╡ 60895046-09c1-4cc7-8528-35470e7eba09
 begin
@@ -279,11 +289,17 @@ begin
 	select!(test, Not([:Date, :Time, :date_time, :cluster, ]))
 end
 
+# ╔═╡ 5cc2cf20-7726-4ee8-85b9-d923df940680
+
+
 # ╔═╡ 3b811c60-a918-43fd-bd14-1e0bad0aba1f
 begin
 	y_train = copy(train[!,:Voltage])
 	y_test = copy(test[!,:Voltage])
 end
+
+# ╔═╡ e7dea118-2e56-4174-ad38-5e023225ff28
+
 
 # ╔═╡ 2de3e03c-c4e6-46d8-8b89-e929e35cd4b3
 function cyclical_encoder(df::DataFrame, columns::Union{Array, Symbol}, max_val::Union{Array, Int} )
@@ -382,8 +398,11 @@ begin
 end
 
 # ╔═╡ 8fa20180-6720-48bf-b1b8-7404f831edd8
+# ╠═╡ disabled = true
+#=╠═╡
 
 etr = EvoTreeRegressor(max_depth =17,)
+  ╠═╡ =#
 
 # ╔═╡ 2a3e6aa0-bef8-49e8-9ab2-0ecebfd0a39d
 # ╠═╡ disabled = true
@@ -405,13 +424,20 @@ end
   ╠═╡ =#
 
 # ╔═╡ 88460105-3bc2-4277-95ad-b6aee126d0fe
+# ╠═╡ disabled = true
+#=╠═╡
 plot(machregTuned)
+  ╠═╡ =#
 
 # ╔═╡ 4220c02f-e83a-4e8a-8976-cf972554e42e
+# ╠═╡ disabled = true
+#=╠═╡
 report(machregTuned).best_model
 
+  ╠═╡ =#
 
 # ╔═╡ beff6da0-c5ab-4807-a937-46f13d599f0a
+#=╠═╡
 begin
 	machregFinal = machine(fitted_params(machregTuned).best_model, 									train_cyclical[!,14:end], y_train);
 
@@ -426,8 +452,10 @@ begin
 	rmsYtest = rms(predYtest, y_test)
 	println("The rms in test is $rmsYtest")
 end
+  ╠═╡ =#
 
 # ╔═╡ af89b255-6044-475e-a442-87ac8f304730
+#=╠═╡
 begin
 	#get plot for error
 	histFinal = histogram( y_test - predYtest, title = "error rms $rmsYtest", bins= 30)
@@ -436,17 +464,20 @@ begin
 
 	plot(histFinal, scatFinal, layout=(1,2), legend=false)
 end
+  ╠═╡ =#
 
 # ╔═╡ 969a68db-283e-4d97-adaa-b3a896db6f12
+#=╠═╡
 begin
 	plot(y_test, label = "real")
 	plot!(predYtest, label= "predict",)
 end
+  ╠═╡ =#
 
 # ╔═╡ 2b09dbe9-01aa-4326-a417-580a9c387296
 begin
 	#Conformal prediction
-	model3 = EvoTreeRegressor(nrounds=100, max_depth = 17, lambda = 0.034) 
+	model3 = EvoTreeRegressor(nrounds=50, max_depth = 17, lambda = 0.034) 
 	#conf_model = conformal_model(model)
 	mach3 = machine(model3, train_cyclical[!,14:end], y_train)
 	fit!(mach3)
@@ -2305,9 +2336,13 @@ version = "1.4.1+0"
 # ╠═8d47bee3-6140-41af-9e8f-7ace82413f45
 # ╠═c1c0366e-9776-4d80-9156-df95c8e0dba0
 # ╠═d5c80f35-b750-41c1-8a30-9cb89c59f5aa
+# ╠═82efcd26-1d2a-4d12-b121-cada9ba1a859
 # ╠═d29bbac3-ee6d-47af-b8db-ab99f5b030b4
+# ╠═dfb0e7b3-feba-4541-bfe8-a5eb08713be6
 # ╠═60895046-09c1-4cc7-8528-35470e7eba09
+# ╠═5cc2cf20-7726-4ee8-85b9-d923df940680
 # ╠═3b811c60-a918-43fd-bd14-1e0bad0aba1f
+# ╠═e7dea118-2e56-4174-ad38-5e023225ff28
 # ╠═2de3e03c-c4e6-46d8-8b89-e929e35cd4b3
 # ╠═6610f46e-5475-4865-b690-cdde061b467e
 # ╠═43172899-ccd9-48d6-b3fd-ed9a3add8833
