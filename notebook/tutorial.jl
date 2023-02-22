@@ -243,8 +243,6 @@ begin
 	h3 = heatmap(freqtable(data,:cluster,:month)./freqtable(data,:cluster), title = "month")
 	h4 = heatmap(freqtable(data,:cluster,:day)./freqtable(data,:cluster), title = "day")
 
-	#@df data boxplot(string.(:cluster), :Global_active_power, fillalpha=0.75, linewidth=2)
-	#@df data boxplot(string.(:cluster), :Global_active_power, fillalpha=0.75, linewidth=2)
 	plot(h1, h2, h3, h4 ,layout=(2,2), legend=false)
 end
 
@@ -258,9 +256,14 @@ md"""
 This might give us a slight hint that time frames might be necessary, we'll take this information for character engineering at this point later. Now let's start with the next phase.
 """
 
+# ╔═╡ c1c0366e-9776-4d80-9156-df95c8e0dba0
+md"""
+For now, let's take straightforward steps with the data and incorporate just one data lag, in Julia we can use ShiftedArrays package to do it.
+"""
+
 # ╔═╡ d5c80f35-b750-41c1-8a30-9cb89c59f5aa
 begin
-	data[!, :lag_30] = Array(ShiftedArray(data.Global_active_power, 30))
+	data[!, :lag_30] = Array(ShiftedArray(data.Voltage, 30))
 	replace!(data.lag_30, missing => 0);
 end
 
@@ -383,6 +386,8 @@ end
 etr = EvoTreeRegressor(max_depth =17,)
 
 # ╔═╡ 2a3e6aa0-bef8-49e8-9ab2-0ecebfd0a39d
+# ╠═╡ disabled = true
+#=╠═╡
 begin 
 	#max_depth_range = range(etr, :max_depth, lower = 10, upper = 20)
 	round_range = range(etr, :nrounds, lower = 10, upper = 50)
@@ -397,6 +402,7 @@ begin
 
 	fit!(machregTuned);
 end
+  ╠═╡ =#
 
 # ╔═╡ 88460105-3bc2-4277-95ad-b6aee126d0fe
 plot(machregTuned)
@@ -2297,6 +2303,7 @@ version = "1.4.1+0"
 # ╠═3b1f7548-4e85-40b2-b6d9-1dfcba6e49ab
 # ╠═3cef18e2-ae64-49f6-bc9d-219b7f828f05
 # ╠═8d47bee3-6140-41af-9e8f-7ace82413f45
+# ╠═c1c0366e-9776-4d80-9156-df95c8e0dba0
 # ╠═d5c80f35-b750-41c1-8a30-9cb89c59f5aa
 # ╠═d29bbac3-ee6d-47af-b8db-ab99f5b030b4
 # ╠═60895046-09c1-4cc7-8528-35470e7eba09
