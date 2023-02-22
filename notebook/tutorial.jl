@@ -290,7 +290,9 @@ begin
 end
 
 # ╔═╡ 5cc2cf20-7726-4ee8-85b9-d923df940680
-
+md"""
+Now Let's get our target variable, which is the Voltage for this case
+"""
 
 # ╔═╡ 3b811c60-a918-43fd-bd14-1e0bad0aba1f
 begin
@@ -299,7 +301,9 @@ begin
 end
 
 # ╔═╡ e7dea118-2e56-4174-ad38-5e023225ff28
-
+md"""
+Now we are going to apply a cyclical encoder to be able to work with the data, we have several new variables related to time (month, day, hour, among others), and all these variables will be more helpful if we allow extracting their cyclical character, that is why we use a trigonometric transformation
+"""
 
 # ╔═╡ 2de3e03c-c4e6-46d8-8b89-e929e35cd4b3
 function cyclical_encoder(df::DataFrame, columns::Union{Array, Symbol}, max_val::Union{Array, Int} )
@@ -319,50 +323,18 @@ begin
 	test_cyclical = cyclical_encoder(test, columns_selected, max_val)
 end
 
+# ╔═╡ e5606e70-8c01-48de-a049-fb4a681e9258
+md"""
+Let's check it out our schema
+"""
+
 # ╔═╡ 43172899-ccd9-48d6-b3fd-ed9a3add8833
 schema(train_cyclical[!, 9:end])
 
-# ╔═╡ 6e1a56b7-69cd-46e3-9716-22f0bda1f2f7
-# ╠═╡ disabled = true
-#=╠═╡
-begin
-	train_coerced = coerce(train_cyclical, 
-		:year_sin=>Continuous,
-		:month_sin=>Continuous,
-		:day_sin=>Continuous,
-		:hour_sin=>Continuous,
-		:minute_sin=>Continuous,
-		:dayofweek_sin=>Continuous,
-		:year_cos=>Continuous,
-		:month_cos=>Continuous,
-		:day_cos=>Continuous,
-		:hour_cos=>Continuous,
-		:minute_cos=>Continuous,
-		:dayofweek_cos=>Continuous,
-		:lag_30=>Continuous,
-		:weeekend=>Multiclass,
-		:interval_day=>Multiclass,
-	);
-	
-	test_coerced = coerce(test_cyclical, 
-		:year_sin=>Continuous,
-		:month_sin=>Continuous,
-		:day_sin=>Continuous,
-		:hour_sin=>Continuous,
-		:minute_sin=>Continuous,
-		:dayofweek_sin=>Continuous,
-		:year_cos=>Continuous,
-		:month_cos=>Continuous,
-		:day_cos=>Continuous,
-		:hour_cos=>Continuous,
-		:minute_cos=>Continuous,
-		:dayofweek_cos=>Continuous,
-		:lag_30=>Continuous,
-		:weeekend=>Multiclass,
-		:interval_day=>Multiclass,
-	);
-end
-  ╠═╡ =#
+# ╔═╡ 43b09f3a-3e6f-49a5-a5f1-410f0d10cb1f
+md"""
+Finally, let's take out our model a try to train our data with this
+"""
 
 # ╔═╡ 95667564-9d8a-45ca-a5c8-b5baad187f4b
 begin
@@ -505,7 +477,7 @@ begin
 end
 
 # ╔═╡ 50d52b30-3fd1-47c2-9297-8ac365b31410
-feature = importance(mach3)
+
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -2345,8 +2317,9 @@ version = "1.4.1+0"
 # ╠═e7dea118-2e56-4174-ad38-5e023225ff28
 # ╠═2de3e03c-c4e6-46d8-8b89-e929e35cd4b3
 # ╠═6610f46e-5475-4865-b690-cdde061b467e
+# ╠═e5606e70-8c01-48de-a049-fb4a681e9258
 # ╠═43172899-ccd9-48d6-b3fd-ed9a3add8833
-# ╠═6e1a56b7-69cd-46e3-9716-22f0bda1f2f7
+# ╠═43b09f3a-3e6f-49a5-a5f1-410f0d10cb1f
 # ╠═95667564-9d8a-45ca-a5c8-b5baad187f4b
 # ╠═8b65a47d-8717-4ce0-85dc-353c9dcb16b2
 # ╠═abca48a9-c9d0-4726-a3df-b0801371241a
