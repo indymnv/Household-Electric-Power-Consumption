@@ -348,135 +348,48 @@ end
 
 # ╔═╡ 8b65a47d-8717-4ce0-85dc-353c9dcb16b2
 begin
-	# 0.7725232666581258
+	pred_etr_train = MLJ.predict(machreg, train_cyclical[!,14:end]);
+	rms_score_train = rms(pred_etr_train, y_train)
+	println("The rms in train is $rms_score_train")
+	
 	pred_etr = MLJ.predict(machreg, test_cyclical[!,14:end]);
 	rms_score = rms(pred_etr, y_test)
+	println("The rms in test is $rms_score")
 end
+
+# ╔═╡ c67517a5-a83a-4da6-871a-f77e11fa22e0
+md"""
+In this section, we plot the residual left by our model, and here we can detect some signs of overfitting, considering that our model has a much better score in the training dataset than in the test dataset. On the other hand, the plots are showing us that our model has biases in its predictions, it is not being able to recognize trends.
+"""
 
 # ╔═╡ abca48a9-c9d0-4726-a3df-b0801371241a
 begin
-	er1=histogram( y_test - pred_etr, title = "error rms $rms_score", bins= 20)
-	er2 = scatter( y_test , pred_etr, )
+	er1=histogram( y_test - pred_etr, title = "residual distribution", bins= 20)
+	er2 = scatter( sample(y_test - pred_etr, ordered=true, 1000), title = "residual observation (sample = 1000)",)
 	
 	
-	plot(er1, er2, layout=(1,2), legend=false)
+	plot(er1, er2, layout=(2,1), legend=false,)
 	
 end
 
 # ╔═╡ 8fc811e6-8644-4d66-bc50-a49b4da56d64
 begin
-	plot(y_test, label = "real")
+	plot(y_test, label = "real", title = "test set real vs prediction")
 	plot!(pred_etr, label= "predict")
 end
 
-# ╔═╡ 8fa20180-6720-48bf-b1b8-7404f831edd8
-# ╠═╡ disabled = true
-#=╠═╡
-
-etr = EvoTreeRegressor(max_depth =17,)
-  ╠═╡ =#
-
-# ╔═╡ 2a3e6aa0-bef8-49e8-9ab2-0ecebfd0a39d
-# ╠═╡ disabled = true
-#=╠═╡
-begin 
-	#max_depth_range = range(etr, :max_depth, lower = 10, upper = 20)
-	round_range = range(etr, :nrounds, lower = 10, upper = 50)
-	lambda_range = range(etr, :lambda, lower = 0, upper = 0.1)
-	
-	lmTuneModel = TunedModel(model=etr,
-	                          resampling = TimeSeriesCV(nfolds=3),
-	                          tuning = RandomSearch(),
-	                          range = [round_range, lambda_range,],
-	                          measures=[rmse]);
-	machregTuned = machine(lmTuneModel, train_cyclical[!,14:end], y_train);
-
-	fit!(machregTuned);
-end
-  ╠═╡ =#
-
-# ╔═╡ 88460105-3bc2-4277-95ad-b6aee126d0fe
-# ╠═╡ disabled = true
-#=╠═╡
-plot(machregTuned)
-  ╠═╡ =#
-
-# ╔═╡ 4220c02f-e83a-4e8a-8976-cf972554e42e
-# ╠═╡ disabled = true
-#=╠═╡
-report(machregTuned).best_model
-
-  ╠═╡ =#
-
-# ╔═╡ beff6da0-c5ab-4807-a937-46f13d599f0a
-#=╠═╡
-begin
-	machregFinal = machine(fitted_params(machregTuned).best_model, 									train_cyclical[!,14:end], y_train);
-
-	fit!(machregFinal);
-	
-	#predict and get error
-	predYtrain = MLJ.predict(machregFinal, train_cyclical[!,14:end]);
-	rmsYtrain = rms(predYtrain, y_train)
-	println("The rms in train is $rmsYtrain")
-	
-	predYtest = MLJ.predict(machregFinal, test_cyclical[!,14:end]);
-	rmsYtest = rms(predYtest, y_test)
-	println("The rms in test is $rmsYtest")
-end
-  ╠═╡ =#
-
-# ╔═╡ af89b255-6044-475e-a442-87ac8f304730
-#=╠═╡
-begin
-	#get plot for error
-	histFinal = histogram( y_test - predYtest, title = "error rms $rmsYtest", bins= 30)
-
-	scatFinal = scatter( y_test , predYtest, )
-
-	plot(histFinal, scatFinal, layout=(1,2), legend=false)
-end
-  ╠═╡ =#
-
-# ╔═╡ 969a68db-283e-4d97-adaa-b3a896db6f12
-#=╠═╡
-begin
-	plot(y_test, label = "real")
-	plot!(predYtest, label= "predict",)
-end
-  ╠═╡ =#
-
-# ╔═╡ 2b09dbe9-01aa-4326-a417-580a9c387296
-begin
-	#Conformal prediction
-	model3 = EvoTreeRegressor(nrounds=50, max_depth = 17, lambda = 0.034) 
-	#conf_model = conformal_model(model)
-	mach3 = machine(model3, train_cyclical[!,14:end], y_train)
-	fit!(mach3)
-end
-
-# ╔═╡ de38510c-4fd4-4a51-beb7-78a1ecfc6ba9
-begin
-	# 0.7725232666581258
-	#pred_etr3 = MLJ.predict(mach3, test_cyclical[!,14:end]);
-	#rms_score3 = rms(pred_etr3, y_test)
-
-	predYtrain3 = MLJ.predict(mach3, train_cyclical[!,14:end]);
-	rmsYtrain3 = rms(predYtrain3, y_train)
-	println("The rms in train is $rmsYtrain3")
-	
-	predYtest3 = MLJ.predict(mach3, test_cyclical[!,14:end]);
-	rmsYtest3 = rms(predYtest3, y_test)
-	println("The rms in test is $rmsYtest3")
-end
-
-# ╔═╡ fc91c85e-d432-4fa1-ac1c-378ef2bcdfd1
-begin
-	plot(y_test, label = "real")
-	plot!(predYtest3, label= "predict",)
-end
-
 # ╔═╡ 50d52b30-3fd1-47c2-9297-8ac365b31410
+md"""
+As we can see, this baseline model is acceptable but does not capture the trend or its cycles.
+"""
+
+# ╔═╡ c41af9ad-d20e-4e51-a8c6-8b4dd04bb5fd
+
+
+# ╔═╡ 99eea13b-00d9-4b5c-b2c2-df2465236568
+
+
+# ╔═╡ 04de2956-d41d-4c79-b633-c76e591f60eb
 
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -2322,18 +2235,12 @@ version = "1.4.1+0"
 # ╠═43b09f3a-3e6f-49a5-a5f1-410f0d10cb1f
 # ╠═95667564-9d8a-45ca-a5c8-b5baad187f4b
 # ╠═8b65a47d-8717-4ce0-85dc-353c9dcb16b2
+# ╠═c67517a5-a83a-4da6-871a-f77e11fa22e0
 # ╠═abca48a9-c9d0-4726-a3df-b0801371241a
 # ╠═8fc811e6-8644-4d66-bc50-a49b4da56d64
-# ╠═8fa20180-6720-48bf-b1b8-7404f831edd8
-# ╠═2a3e6aa0-bef8-49e8-9ab2-0ecebfd0a39d
-# ╠═88460105-3bc2-4277-95ad-b6aee126d0fe
-# ╠═4220c02f-e83a-4e8a-8976-cf972554e42e
-# ╠═beff6da0-c5ab-4807-a937-46f13d599f0a
-# ╠═af89b255-6044-475e-a442-87ac8f304730
-# ╠═969a68db-283e-4d97-adaa-b3a896db6f12
-# ╠═2b09dbe9-01aa-4326-a417-580a9c387296
-# ╠═de38510c-4fd4-4a51-beb7-78a1ecfc6ba9
-# ╠═fc91c85e-d432-4fa1-ac1c-378ef2bcdfd1
 # ╠═50d52b30-3fd1-47c2-9297-8ac365b31410
+# ╠═c41af9ad-d20e-4e51-a8c6-8b4dd04bb5fd
+# ╠═99eea13b-00d9-4b5c-b2c2-df2465236568
+# ╠═04de2956-d41d-4c79-b633-c76e591f60eb
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
