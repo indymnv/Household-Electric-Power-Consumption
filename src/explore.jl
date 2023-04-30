@@ -9,7 +9,6 @@ using CSV
 using Dates
 using Statistics
 using MLJClusteringInterface
-using ParallelKMeans
 using Clustering
 using FreqTables
 using StatsPlots
@@ -97,7 +96,7 @@ mach = machine(kmeans, X) |> fit!
 Xsmall = MLJ.transform(mach);
 selectrows(Xsmall, 1:4) |> pretty
 yhat = MLJ.predict(mach)
-data[!,:cluster] = yhat
+data[!,:cluster] = yhatWithout
 
 
 combine(groupby(data, :cluster), nrow )
@@ -274,7 +273,7 @@ y_pred_up = [y for (x, y) in y_pred]
 
 #also contribute with line plots
 plot(y_test, label = "real")
-plot!(pred_etr, label= "predict", ribbons = (pred_etr - y_pred_inf, y_pred_up-pred_etr) )
+plot!(pred_etr, label= "predict",)
 
 plot!(y_pred_inf, color= "green")
 plot!(y_pred_up, color = "green")

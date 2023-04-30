@@ -172,7 +172,7 @@ Let's get our clusters and assigning to a column
 begin
 	KMeans= @load KMeans pkg=Clustering
 	kmeans = KMeans(k=3)
-	#train = collect(Matrix(X)')
+	
 	mach = machine(kmeans, X) |> fit!
 	
 	# cluster X into 3 clusters using K-means
@@ -226,8 +226,7 @@ begin
 	b3 = @df data boxplot(string.(:cluster), :Global_intensity, fillalpha=0.75, linewidth=2, title ="Global intensity")
 	b4 = @df data boxplot(string.(:cluster), :Voltage, fillalpha=0.75, linewidth=2, title = "Voltage")
 
-	#@df data boxplot(string.(:cluster), :Global_active_power, fillalpha=0.75, linewidth=2)
-	#@df data boxplot(string.(:cluster), :Global_active_power, fillalpha=0.75, linewidth=2)
+
 	plot(b1, b2, b3, b4 ,layout=(2,2), legend=false)
 end
 
@@ -383,14 +382,10 @@ md"""
 As we can see, this baseline model is acceptable but does not capture the trend or its cycles.
 """
 
-# ╔═╡ c41af9ad-d20e-4e51-a8c6-8b4dd04bb5fd
-
-
-# ╔═╡ 99eea13b-00d9-4b5c-b2c2-df2465236568
-
-
-# ╔═╡ 04de2956-d41d-4c79-b633-c76e591f60eb
-
+# ╔═╡ e3b80624-bfea-4e9d-8e9c-159ca949bff7
+md"""
+Still developing ...
+"""
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -2193,54 +2188,52 @@ version = "1.4.1+0"
 # ╠═652f39e8-227c-4f6c-a9f0-7b576e8f89e8
 # ╟─da5bc886-6107-4dbd-b233-99ac022e7f34
 # ╠═62e02377-da4c-4381-9e59-4f32372f4fb5
-# ╠═b20e5a78-3c5c-4ae8-b49c-38d3eaf1bba1
+# ╟─b20e5a78-3c5c-4ae8-b49c-38d3eaf1bba1
 # ╠═2364d69b-f093-4fa0-a366-96c4091660bf
 # ╠═a4526d2f-5895-4468-aa43-1192b2dd50b5
-# ╠═58c9735b-2c25-4856-847c-6a418f96b291
+# ╟─58c9735b-2c25-4856-847c-6a418f96b291
 # ╠═185e8de6-b136-45d3-9603-7cb62fe46a95
 # ╠═4b9c8ce7-2cc5-4990-9d3b-884178d66825
 # ╠═d90786bf-aab1-49bf-8b7b-82827c61da1b
-# ╠═fa14547b-2803-4806-b439-631e8d382cf1
+# ╟─fa14547b-2803-4806-b439-631e8d382cf1
 # ╟─41510658-acc7-4b32-8e79-883093440cf7
 # ╟─63fda925-ca7d-4b4a-9fd9-73acd0952634
-# ╠═297b0496-64bb-4290-9946-2d9f90fffb49
+# ╟─297b0496-64bb-4290-9946-2d9f90fffb49
 # ╠═fc4bd69b-0fb4-46b4-b1a5-fb95bb4990d5
-# ╠═654e2e58-92e6-4ec9-a1c6-b53e3a954a53
+# ╟─654e2e58-92e6-4ec9-a1c6-b53e3a954a53
 # ╠═f5cff6d6-3652-496c-afdf-b6bb4a70d203
-# ╠═9e399a30-f44c-4e1f-b93c-34acccb5de75
+# ╟─9e399a30-f44c-4e1f-b93c-34acccb5de75
 # ╠═9cadf7ab-428b-4c92-8aed-2995bc13b629
-# ╠═b9860292-3c77-418a-9058-02c8f2ec9fed
+# ╟─b9860292-3c77-418a-9058-02c8f2ec9fed
 # ╠═e3239243-ccd3-403a-be05-24ee8c43b766
-# ╠═57509d8a-2664-41e1-a828-1a9320891a26
+# ╟─57509d8a-2664-41e1-a828-1a9320891a26
 # ╠═e34c100f-5107-4933-abed-ae25ad16d662
 # ╠═6a3e5035-445a-4f5d-9b0d-cedd251f2b6a
 # ╠═4e5e989f-9cfa-4b04-87a4-9490a66d0c0d
-# ╠═83709df9-986c-4229-9a3c-ed666ac8c98e
+# ╟─83709df9-986c-4229-9a3c-ed666ac8c98e
 # ╠═3b1f7548-4e85-40b2-b6d9-1dfcba6e49ab
-# ╠═3cef18e2-ae64-49f6-bc9d-219b7f828f05
-# ╠═8d47bee3-6140-41af-9e8f-7ace82413f45
-# ╠═c1c0366e-9776-4d80-9156-df95c8e0dba0
+# ╟─3cef18e2-ae64-49f6-bc9d-219b7f828f05
+# ╟─8d47bee3-6140-41af-9e8f-7ace82413f45
+# ╟─c1c0366e-9776-4d80-9156-df95c8e0dba0
 # ╠═d5c80f35-b750-41c1-8a30-9cb89c59f5aa
-# ╠═82efcd26-1d2a-4d12-b121-cada9ba1a859
+# ╟─82efcd26-1d2a-4d12-b121-cada9ba1a859
 # ╠═d29bbac3-ee6d-47af-b8db-ab99f5b030b4
-# ╠═dfb0e7b3-feba-4541-bfe8-a5eb08713be6
+# ╟─dfb0e7b3-feba-4541-bfe8-a5eb08713be6
 # ╠═60895046-09c1-4cc7-8528-35470e7eba09
-# ╠═5cc2cf20-7726-4ee8-85b9-d923df940680
+# ╟─5cc2cf20-7726-4ee8-85b9-d923df940680
 # ╠═3b811c60-a918-43fd-bd14-1e0bad0aba1f
-# ╠═e7dea118-2e56-4174-ad38-5e023225ff28
+# ╟─e7dea118-2e56-4174-ad38-5e023225ff28
 # ╠═2de3e03c-c4e6-46d8-8b89-e929e35cd4b3
 # ╠═6610f46e-5475-4865-b690-cdde061b467e
-# ╠═e5606e70-8c01-48de-a049-fb4a681e9258
+# ╟─e5606e70-8c01-48de-a049-fb4a681e9258
 # ╠═43172899-ccd9-48d6-b3fd-ed9a3add8833
-# ╠═43b09f3a-3e6f-49a5-a5f1-410f0d10cb1f
+# ╟─43b09f3a-3e6f-49a5-a5f1-410f0d10cb1f
 # ╠═95667564-9d8a-45ca-a5c8-b5baad187f4b
 # ╠═8b65a47d-8717-4ce0-85dc-353c9dcb16b2
-# ╠═c67517a5-a83a-4da6-871a-f77e11fa22e0
+# ╟─c67517a5-a83a-4da6-871a-f77e11fa22e0
 # ╠═abca48a9-c9d0-4726-a3df-b0801371241a
 # ╠═8fc811e6-8644-4d66-bc50-a49b4da56d64
-# ╠═50d52b30-3fd1-47c2-9297-8ac365b31410
-# ╠═c41af9ad-d20e-4e51-a8c6-8b4dd04bb5fd
-# ╠═99eea13b-00d9-4b5c-b2c2-df2465236568
-# ╠═04de2956-d41d-4c79-b633-c76e591f60eb
+# ╟─50d52b30-3fd1-47c2-9297-8ac365b31410
+# ╟─e3b80624-bfea-4e9d-8e9c-159ca949bff7
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
